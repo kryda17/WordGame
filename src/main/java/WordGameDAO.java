@@ -11,9 +11,9 @@ public class WordGameDAO {
     public WordGameDAO() {
         try {
             MariaDbDataSource dataSource = new MariaDbDataSource();
-            dataSource.setUrl("jdbc:mariadb://localhost:3306/employees?useUnicode=true ");
+            dataSource.setUrl("jdbc:mariadb://localhost:3306/employees?useUnicode=true");
             dataSource.setUser("root");
-            dataSource.setPassword("");
+            dataSource.setPassword(" ");
             ds = dataSource;
         } catch (SQLException sqlException) {
             throw new IllegalStateException("Can't connect to the database.");
