@@ -19,8 +19,8 @@ public class WordGameDAO {
             dataSource.setUser("root");
             dataSource.setPassword("");
             ds = dataSource;
-        } catch (SQLException sqlException) {
-            throw new IllegalStateException("Can't connect to the database.");
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Can't connect to the database.", sqle);
         }
     }
 
@@ -33,7 +33,7 @@ public class WordGameDAO {
                 ps.executeUpdate();
             }
         } catch (SQLException sqle) {
-            throw new IllegalStateException("Can't write in database.");
+            throw new IllegalStateException("Can't write in database.", sqle);
         }
     }
 
@@ -46,7 +46,7 @@ public class WordGameDAO {
                 addWords(words);
             }
         } catch (IOException ioe) {
-            throw new IllegalArgumentException("Can't read the file.");
+            throw new IllegalArgumentException("Can't read the file.", ioe);
         }
     }
 
@@ -62,7 +62,7 @@ public class WordGameDAO {
             return words;
 
         } catch (SQLException sqle) {
-            throw new IllegalStateException("Can't write in database.");
+            throw new IllegalStateException("Can't write in database.", sqle);
         }
     }
 
