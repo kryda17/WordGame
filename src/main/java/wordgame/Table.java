@@ -14,6 +14,9 @@ public class Table {
         makeBlackSquares();
     }
 
+    //Ha ugyan azokat adja véletlenszerűen,akk kevesebb fekete kocka lesz,első futtatásra 1 volt :D
+    //Kellene egy új osztály szerintem,egy 2DPoint,vagy hasonló a koordinátáknak és
+    //Egy ciklus,amit addig futtatni és addolni vele ezt a coordináta objektumot egy setbe,amig i el nem éri a set.size() == MAX_BLACK_SQUARES-t
     private void makeBlackSquares() {
         Random rnd = new Random();
         int numberOfBlackSquares = rnd.nextInt(MAX_BLACK_SQUARES) + 1;

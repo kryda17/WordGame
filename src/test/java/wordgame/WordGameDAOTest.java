@@ -27,14 +27,17 @@ class WordGameDAOTest {
     }
 
     @Test
-    void testAddWithVarargs() {
+    void testAddWordsWithVarargs() {
         wordGameDAO.addWords("John Doe", "Jack Doe");
         assertEquals(Arrays.asList("John Doe", "Jack Doe"), wordGameDAO.queryWords());
+
+        wordGameDAO.addWords(new String[] {"Jane Doe", "John Wick"});
+        assertEquals(Arrays.asList("John Doe", "Jack Doe", "Jane Doe", "John Wick"), wordGameDAO.queryWords());
     }
 
     @Test
     void testReadFromFile() {
-        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/testfile.txt");
+        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources//szövegek/testfile.txt");
         assertEquals(Arrays.asList("Test", "test2"), wordGameDAO.queryWords());
     }
 
