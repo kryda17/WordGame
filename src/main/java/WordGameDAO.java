@@ -1,5 +1,9 @@
 import org.mariadb.jdbc.MariaDbDataSource;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,7 @@ public class WordGameDAO {
         }
     }
 
+    //Beszúr egy vagy több szót az adatbázisba. String split()-kor hasznos a varargs
     public void addWords(String... words) {
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement("INSERT INTO wordgame (word) VALUES (?)")) {
@@ -29,6 +34,19 @@ public class WordGameDAO {
             }
         } catch (SQLException sqle) {
             throw new IllegalStateException("Can't write in database.");
+        }
+    }
+
+    public void addWordsSeperatedBySpaceFromFile(String file) {
+        Path path = Path.of(file);
+        try(BufferedReader br = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] words = line.split(" ");
+                addWords(words);
+            }
+        } catch (IOException ioe) {
+            throw new IllegalArgumentException("Can't read the file.");
         }
     }
 

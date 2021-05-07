@@ -30,4 +30,10 @@ class WordGameDAOTest {
         assertEquals(Arrays.asList("John Doe", "Jack Doe"), wordGameDAO.queryWords());
     }
 
+    @Test
+    void testReadFromFile() {
+        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/testfile.txt");
+        assertEquals(Arrays.asList("Test", "test2"), wordGameDAO.queryWords());
+    }
+
 }
