@@ -29,7 +29,6 @@ class WordGameDAOTest {
 
     @Test
     void testAddWithVarargs() {
-        List<String> strings = new ArrayList<>();
         wordGameDAO.addWords("John Doe", "Jack Doe");
         assertEquals(Arrays.asList("John Doe", "Jack Doe"), wordGameDAO.queryWords());
     }
