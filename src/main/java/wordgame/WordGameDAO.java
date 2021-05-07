@@ -1,3 +1,5 @@
+package wordgame;
+
 import org.mariadb.jdbc.MariaDbDataSource;
 
 import java.io.BufferedReader;
