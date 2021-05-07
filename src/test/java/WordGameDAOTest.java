@@ -21,10 +21,17 @@ class WordGameDAOTest {
     }
 
     @Test
-    void testCreateAndQuery() {
+    void testAddWord() {
         List<String> strings = new ArrayList<>();
-        wordGameDAO.createWord("John Doe");
+        wordGameDAO.addWords("John Doe");
         assertEquals(Arrays.asList("John Doe"), wordGameDAO.queryWords());
+    }
+
+    @Test
+    void testAddWithVarargs() {
+        List<String> strings = new ArrayList<>();
+        wordGameDAO.addWords("John Doe", "Jack Doe");
+        assertEquals(Arrays.asList("John Doe", "Jack Doe"), wordGameDAO.queryWords());
     }
 
 }
