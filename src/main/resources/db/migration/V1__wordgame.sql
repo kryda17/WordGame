@@ -1,0 +1,4 @@
+CREATE TABLE wordgame (id INT NOT NULL AUTO_INCREMENT,
+word varchar(255) NOT NULL,
+PRIMARY KEY (id)
+)
