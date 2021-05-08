@@ -5,8 +5,11 @@ import java.util.Random;
 public class Table {
 
     private static final int GRID_SIZE = 10;
-    private static final String BLACK_GRID_PLACEHOLDER = "BLANK";
-    private static final int MAX_BLACK_SQUARES = 10;
+    private static final String BLACK_GRID_PLACEHOLDER = "#";
+    private static final int MIN_BLACK_SQUARES = 10;
+    private static final int RANDOM_PLUS_BLACK_SQUARES = 10;
+    private static final Random RND = new Random();
+
     private String[][] table;
 
     public Table() {
@@ -14,17 +17,34 @@ public class Table {
         makeBlackSquares();
     }
 
-    //Ha ugyan azokat adja véletlenszerűen,akk kevesebb fekete kocka lesz,első futtatásra 1 volt :D
-    //Kellene egy új osztály szerintem,egy 2DPoint,vagy hasonló a koordinátáknak és
-    //Egy ciklus,amit addig futtatni és addolni vele ezt a coordináta objektumot egy setbe,amig i el nem éri a set.size() == MAX_BLACK_SQUARES-t
     private void makeBlackSquares() {
-        Random rnd = new Random();
-        int numberOfBlackSquares = rnd.nextInt(MAX_BLACK_SQUARES) + 1;
-        for(int i = 0; i<numberOfBlackSquares; i++){
-            int xCoord = rnd.nextInt(GRID_SIZE);
-            int yCoord = rnd.nextInt(GRID_SIZE);
-            table[xCoord][yCoord] = BLACK_GRID_PLACEHOLDER;
+        int numberOfBlackSquares = MIN_BLACK_SQUARES + RND.nextInt(RANDOM_PLUS_BLACK_SQUARES) + 1;
+        for (int i = 0; i < numberOfBlackSquares; i++) {
+            Coordinate coord = generateCoordinate();
+            table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
         }
+    }
+
+    private Coordinate generateCoordinate() {
+        int xCoord = RND.nextInt(GRID_SIZE);
+        int yCoord = RND.nextInt(GRID_SIZE);
+        Coordinate coord = new Coordinate(xCoord, yCoord);
+
+        if (isValidCoord(coord)) {
+            return coord;
+        }
+         return generateCoordinate();
+    }
+
+    private boolean isValidCoord(Coordinate coord) {
+        int x = coord.getxCoord();
+        int y = coord.getyCoord();
+
+        if (BLACK_GRID_PLACEHOLDER.equals(table[x][y])) {
+            return false;
+        }
+
+        return true;
     }
 
     public void printTable() {
