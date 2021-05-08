@@ -67,13 +67,14 @@ public class Table2 {
     }
 
     private void searchAndFillEmpytLines() {
-        List<Integer> emptyRow = findEmptyRows().getRows();
+        EmptyRowsAndCols emptyRowsAndCols = findEmptyRows();
+        List<Integer> emptyRow = emptyRowsAndCols.getRows();
         for (int i : emptyRow) {
             Coordinate coord = generateYCoordinate(i);
             insertBlackSquare(coord);
         }
 
-        List<Integer> emptyColumn = findEmptyRows().getCols();
+        List<Integer> emptyColumn = emptyRowsAndCols.getCols();
         for (int i : emptyColumn) {
             Coordinate coord = generateXCoordinate(i);
             insertBlackSquare(coord);
@@ -101,34 +102,32 @@ public class Table2 {
     }
 
     private EmptyRowsAndCols findEmptyRows() {
+        int counter = 0;
         List<Integer> emptyRows = new ArrayList<>();
         List<Integer> emptyColumns = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
+            ++counter;
             for (int j = 0; j < GRID_SIZE; j++) {
+                ++counter;
                 if (table[i][j] != null) {
+                    for (int k = 0; k < GRID_SIZE; k++) {
+                        ++counter;
+                        //counter++;
+                        if (table[k][j] != null) {
+                            break;
+                        }
+                        if (k == GRID_SIZE - 1) {
+                            emptyColumns.add(j);
+                        }
+                    }
                     break;
                 }
                 if (j == GRID_SIZE - 1) {
                     emptyRows.add(i);
                 }
-                if (table[j][i] != null) {
-                    break;
-                }
-                if (j == GRID_SIZE - 1) {
-                    emptyColumns.add(i);
-                }
             }
-            /*for (int k = 0; k < GRID_SIZE; k++) {
-                if (table[k][i] != null) {
-                    break;
-                }
-                if (k == GRID_SIZE - 1) {
-                    emptyColumns.add(i);
-                }
-            }
-
-             */
         }
+        System.out.println(counter);
         return new EmptyRowsAndCols(emptyRows, emptyColumns);
     }
 
