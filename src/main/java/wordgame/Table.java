@@ -16,15 +16,21 @@ public class Table {
     public Table() {
         table = new String[GRID_SIZE][GRID_SIZE];
         makeBlackSquares();
+        searchAndFillEmpytLines();
     }
 
     private void makeBlackSquares() {
         int numberOfBlackSquares = MIN_BLACK_SQUARES + RND.nextInt(MIN_BLACK_SQUARES);
         for (int i = 0; i < numberOfBlackSquares; i++) {
             Coordinate coord = generateCoordinate();
-            table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
+            insertBlackSquare(coord);
         }
     }
+
+    private void insertBlackSquare(Coordinate coord) {
+        table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
+    }
+
 
     private Coordinate generateCoordinate() {
         int xCoord = RND.nextInt(GRID_SIZE);
@@ -46,8 +52,7 @@ public class Table {
         }
          */
 
-        for (int i = 0; i < coordinates.size(); i++) {
-            Coordinate secCoord = coordinates.get(i);
+        for (Coordinate secCoord : coordinates) {
 
             int xDiff = Math.abs(x - secCoord.getxCoord());
             int yDiff = Math.abs(y - secCoord.getyCoord());
@@ -59,6 +64,70 @@ public class Table {
 
         coordinates.add(coordinate);
         return true;
+    }
+
+    private void searchAndFillEmpytLines() {
+        List<Integer> emptyRow = findEmptyRows();
+        for (int i : emptyRow) {
+            Coordinate coord = generateYCoordinate(i);
+            insertBlackSquare(coord);
+        }
+
+        List<Integer> emptyColumn = findEmptyColumns();
+        for (int i : emptyColumn) {
+            Coordinate coord = generateXCoordinate(i);
+            insertBlackSquare(coord);
+        }
+    }
+
+    private Coordinate generateYCoordinate(int xCoord) {
+        int yCoord = RND.nextInt(GRID_SIZE);
+        Coordinate coord = new Coordinate(xCoord, yCoord);
+
+        if (isGeneratedCoordPosGood(coord)) {
+            return coord;
+        }
+        return generateYCoordinate(xCoord);
+    }
+
+    private Coordinate generateXCoordinate(int yCoord) {
+        int xCoord = RND.nextInt(GRID_SIZE);
+        Coordinate coord = new Coordinate(xCoord, yCoord);
+
+        if (isGeneratedCoordPosGood(coord)) {
+            return coord;
+        }
+        return generateXCoordinate(yCoord);
+    }
+
+    private List<Integer> findEmptyRows() {
+        List<Integer> emptyRow = new ArrayList<>();
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (table[i][j] != null) {
+                    break;
+                }
+                if (j == GRID_SIZE - 1) {
+                    emptyRow.add(i);
+                }
+            }
+        }
+        return emptyRow;
+    }
+
+    private List<Integer> findEmptyColumns() {
+        List<Integer> emptyColumns = new ArrayList<>();
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                if (table[j][i] != null) {
+                    break;
+                }
+                if (j == GRID_SIZE - 1) {
+                    emptyColumns.add(i);
+                }
+            }
+        }
+        return emptyColumns;
     }
 
     public void printTable() {
@@ -79,4 +148,5 @@ public class Table {
     }
 
      */
+
 }
