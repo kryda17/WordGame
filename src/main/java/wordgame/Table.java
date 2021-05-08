@@ -6,8 +6,8 @@ public class Table {
 
     private static final int GRID_SIZE = 10;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
-    private static final int MIN_BLACK_SQUARES = 10;
-    private static final int RANDOM_PLUS_BLACK_SQUARES = 10;
+    private static final int MIN_BLACK_SQUARES = GRID_SIZE * GRID_SIZE / 10;
+    //private static final int RANDOM_PLUS_BLACK_SQUARES = 10;
     private static final Random RND = new Random();
 
     private List<Coordinate> coordinates = new ArrayList<>();
@@ -19,7 +19,7 @@ public class Table {
     }
 
     private void makeBlackSquares() {
-        int numberOfBlackSquares = MIN_BLACK_SQUARES + RND.nextInt(RANDOM_PLUS_BLACK_SQUARES) + 1;
+        int numberOfBlackSquares = MIN_BLACK_SQUARES + RND.nextInt(MIN_BLACK_SQUARES);
         for (int i = 0; i < numberOfBlackSquares; i++) {
             Coordinate coord = generateCoordinate();
             table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
@@ -41,9 +41,10 @@ public class Table {
         int x = coordinate.getxCoord();
         int y = coordinate.getyCoord();
 
-        if (x == 1 || x == GRID_SIZE - 2 || y == 1 || y == GRID_SIZE - 2) {
+        /*if (x == 1 || x == GRID_SIZE - 2 || y == 1 || y == GRID_SIZE - 2) {
             return false;
         }
+         */
 
         for (int i = 0; i < coordinates.size(); i++) {
             Coordinate secCoord = coordinates.get(i);
@@ -68,4 +69,14 @@ public class Table {
             System.out.println();
         }
     }
+
+    /*private boolean isAllRowColContainsBlackSquare() {
+        for (Coordinate item : coordinates) {
+            int x = item.getxCoord();
+            int y = item.getyCoord();
+            if ()
+        }
+    }
+
+     */
 }
