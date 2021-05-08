@@ -110,14 +110,14 @@ public class Table2 {
             for (int j = 0; j < GRID_SIZE; j++) {
                 ++counter;
                 if (table[i][j] != null) {
-                    for (int k = 0; k < GRID_SIZE; k++) {
+                    for (int k = i; k < GRID_SIZE; k++) {
                         ++counter;
                         //counter++;
-                        if (table[k][j] != null) {
+                        if (table[k][i] != null) {
                             break;
                         }
                         if (k == GRID_SIZE - 1) {
-                            emptyColumns.add(j);
+                            emptyColumns.add(i);
                         }
                     }
                     break;
