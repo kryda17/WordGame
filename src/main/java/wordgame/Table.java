@@ -19,7 +19,7 @@ public class Table {
         makeBlackSquares();
     }
 
-    /*private void fillCoordinateListWithInvalidSqaures() {
+    private List<Coordinate> fillCoordinateListWithInvalidSqaures() {
         List<Coordinate> toAdd = List.of(new Coordinate(0, 1),
                 new Coordinate(0, GRID_SIZE - 2),
                 new Coordinate(1, 0),
@@ -28,9 +28,8 @@ public class Table {
                 new Coordinate(GRID_SIZE - 2, GRID_SIZE - 1),
                 new Coordinate(GRID_SIZE - 1, GRID_SIZE - 2),
                 new Coordinate(GRID_SIZE - 1, 1));
-        coordinates = new ArrayList<>(toAdd);
+        return toAdd;
     }
-     */
 
     private void makeBlackSquares() {
         int numberOfBlackSquares = MIN_BLACK_SQUARES + RND.nextInt(RANDOM_PLUS_BLACK_SQUARES) + 1;
@@ -40,7 +39,8 @@ public class Table {
         }
     }
 
-    private void generateBlacks() {
+    // Egyszer nem kell
+    /*private void generateBlacks() {
         Set<Coordinate> coords = new HashSet<>();
         while (coords.size() < MIN_BLACK_SQUARES) {
             Coordinate coordinate = generateCoordinate();
@@ -48,13 +48,11 @@ public class Table {
         }
         coordinates = new ArrayList<>(coords);
     }
+     */
 
     private Coordinate generateCoordinate() {
         int xCoord = RND.nextInt(GRID_SIZE);
         int yCoord = RND.nextInt(GRID_SIZE);
-        if ((xCoord < 2 || xCoord > GRID_SIZE - 2) || (yCoord < 2 || yCoord > GRID_SIZE - 2)) {
-            return generateCoordinate();
-        }
         Coordinate coord = new Coordinate(xCoord, yCoord);
 
         if (isGeneratedCoordPosGood(coord)) {
@@ -69,7 +67,9 @@ public class Table {
 
             int xDiff = Math.abs(coordinate.getxCoord() - secCoord.getxCoord());
             int yDiff = Math.abs(coordinate.getyCoord() - secCoord.getyCoord());
-            if ((coordinate.getxCoord() == secCoord.getxCoord() && yDiff < 2) || (coordinate.getyCoord() == secCoord.getyCoord() && xDiff < 2)) {
+            boolean isInInvalidList = isCooridinateInInvalidList(coordinate);
+            boolean isLessThanTwoSquareTheDifference = (coordinate.getxCoord() == secCoord.getxCoord() && yDiff < 2) || (coordinate.getyCoord() == secCoord.getyCoord() && xDiff < 2);
+            if (isInInvalidList || isLessThanTwoSquareTheDifference) {
                 return false;
             }
         }
@@ -77,7 +77,17 @@ public class Table {
         return true;
     }
 
-    private boolean isValidCoord(Coordinate coord) {
+    private boolean isCooridinateInInvalidList(Coordinate coordinate) {
+        List<Coordinate> coordinates = fillCoordinateListWithInvalidSqaures();
+        for (Coordinate item : coordinates) {
+            if (coordinate.equals(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*private boolean isValidCoord(Coordinate coord) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
 
@@ -87,6 +97,7 @@ public class Table {
 
         return true;
     }
+    */
 
     public void printTable() {
         for (String[] str : table) {
