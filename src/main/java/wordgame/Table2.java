@@ -66,13 +66,13 @@ public class Table2 {
     }
 
     private void searchAndFillEmpytLines() {
-        List<Integer> emptyRow = findEmptyRows().getRows();
+        List<Integer> emptyRow = findEmptyRowsAndColoumns().getRows();
         for (int i : emptyRow) {
             Coordinate coord = generateYCoordinate(i);
             insertBlackSquare(coord);
         }
 
-        List<Integer> emptyColumn = findEmptyRows().getCols();
+        List<Integer> emptyColumn = findEmptyRowsAndColoumns().getCols();
         for (int i : emptyColumn) {
             Coordinate coord = generateXCoordinate(i);
             insertBlackSquare(coord);
@@ -99,7 +99,7 @@ public class Table2 {
         return generateXCoordinate(yCoord);
     }
 
-    private EmptyRowsAndCols findEmptyRows() {
+    private EmptyRowsAndCols findEmptyRowsAndColoumns() {
         List<Integer> emptyRows = new ArrayList<>();
         List<Integer> emptyColumns = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
