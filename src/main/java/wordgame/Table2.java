@@ -19,25 +19,35 @@ public class Table2 {
     }
 
     private void makeBlackSquares() {
-        for (int i = 0; i < NUM_OF_BLACK_SQUARES; i++) {
-            generateCoordinate();
+        while (coordinates.size() < GRID_SIZE) {
+            Coordinate coordinate = generateCoordinate(coordinates.size());
+            coordinates.add(coordinate);
         }
+
         for (Coordinate coord: coordinates) {
             table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
         }
     }
 
-    private void generateCoordinate() {
-        for (int i = 0; i < GRID_SIZE; i++) {
-            int x = RND.nextInt(GRID_SIZE);
-            int y = i;
-            Coordinate coord = new Coordinate(x, y);
+    private Coordinate generateCoordinate(int size) {
+        int x = RND.nextInt(GRID_SIZE);
+        int y = size;
+        Coordinate coord = new Coordinate(x, y);
 
-            if (isGeneratedCoordPosGood(coord)) {
-                //return coord;
+        if (isGeneratedCoordPosGood(coord)) {
+            return coord;
+            //coordinates.add(coord);
+        }
+            /*x = i;
+            y = RND.nextInt(GRID_SIZE);
+            coord = new Coordinate(x,y);
+            if (isGeneratedCoordPosGood(coord))
+            {
                 coordinates.add(coord);
             }
-        }
+
+             */
+        return generateCoordinate(size);
     }
 
     private boolean isGeneratedCoordPosGood(Coordinate coordinate) {
