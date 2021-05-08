@@ -1,8 +1,12 @@
 package wordgame;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Table {
+
+    private List<Coordinate> coordinates = new ArrayList<>();
 
     private static final int GRID_SIZE = 10;
     private static final String BLACK_GRID_PLACEHOLDER = "#";
@@ -23,6 +27,18 @@ public class Table {
             Coordinate coord = generateCoordinate();
             table[coord.getxCoord()][coord.getyCoord()] = BLACK_GRID_PLACEHOLDER;
         }
+    }
+
+    private boolean isGeneratedCoordPosGood(Coordinate coordinate) {
+        for (int i = 0;i < coordinates.size(); i++) {
+            Coordinate secCoord = coordinates.get(i);
+            int xDiff = Math.abs(coordinate.getxCoord() - secCoord.getxCoord());
+            int yDiff = Math.abs(coordinate.getyCoord() - secCoord.getyCoord());
+            if (xDiff < 2 && yDiff < 2) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private Coordinate generateCoordinate() {
