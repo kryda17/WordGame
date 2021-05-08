@@ -4,11 +4,11 @@ import java.util.*;
 
 public class Table2 {
 
-    private static final int GRID_SIZE = 20;
+    private static final int GRID_SIZE = 10;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
     private static final int MIN_BLACK_SQUARES = GRID_SIZE * GRID_SIZE / 10;
+    //private static final int RANDOM_PLUS_BLACK_SQUARES = 10;
     private static final Random RND = new Random();
-    private static final int NUM_OF_BLACK_SQUARES = MIN_BLACK_SQUARES + RND.nextInt(MIN_BLACK_SQUARES);
 
     private List<Coordinate> coordinates = new ArrayList<>();
     private String[][] table;
@@ -16,6 +16,7 @@ public class Table2 {
     public Table2() {
         table = new String[GRID_SIZE][GRID_SIZE];
         makeBlackSquares();
+        searchAndFillEmpytLines();
     }
 
     private void makeBlackSquares() {
@@ -66,13 +67,13 @@ public class Table2 {
     }
 
     private void searchAndFillEmpytLines() {
-        List<Integer> emptyRow = findEmptyRowsAndColoumns().getRows();
+        List<Integer> emptyRow = findEmptyRows().getRows();
         for (int i : emptyRow) {
             Coordinate coord = generateYCoordinate(i);
             insertBlackSquare(coord);
         }
 
-        List<Integer> emptyColumn = findEmptyRowsAndColoumns().getCols();
+        List<Integer> emptyColumn = findEmptyRows().getCols();
         for (int i : emptyColumn) {
             Coordinate coord = generateXCoordinate(i);
             insertBlackSquare(coord);
@@ -99,7 +100,7 @@ public class Table2 {
         return generateXCoordinate(yCoord);
     }
 
-    private EmptyRowsAndCols findEmptyRowsAndColoumns() {
+    private EmptyRowsAndCols findEmptyRows() {
         List<Integer> emptyRows = new ArrayList<>();
         List<Integer> emptyColumns = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
