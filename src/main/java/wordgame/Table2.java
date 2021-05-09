@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Table2 {
 
-    private static final int GRID_SIZE = 10;
+    private static final int GRID_SIZE = 15;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
     private static final int MIN_BLACK_SQUARES = GRID_SIZE; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
 
@@ -26,7 +26,7 @@ public class Table2 {
 
     private void fillWithRandomBlacks() {
         int counter = 0;
-        int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES);
+        int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES) + GRID_SIZE / 2;
         int allRequiredBlackSquare = MIN_BLACK_SQUARES + rnd_num_of_black_squares;
                 while (coordinates.size() < allRequiredBlackSquare) {
                     ++counter;
