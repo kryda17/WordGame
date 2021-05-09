@@ -6,7 +6,7 @@ public class Table2 {
 
     private static final int GRID_SIZE = 10;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
-    private static final int MIN_BLACK_SQUARES = GRID_SIZE * GRID_SIZE / 10;
+    private static final int MIN_BLACK_SQUARES = GRID_SIZE;
     private static final Random RND = new Random();
     private static final int RND_NUM_OF_BLACK_SQUARES = RND.nextInt(MIN_BLACK_SQUARES);
 
@@ -22,15 +22,17 @@ public class Table2 {
 
     private void makeBlackSquares() {
         coordinates = genCoords();
-        //fillWithRandomBlacks();
+        fillWithRandomBlacks();
         for (int i = 0; i < coordinates.size(); i++) {
             insertBlackSquare(coordinates.get(i));
         }
     }
 
     private void fillWithRandomBlacks() {
+        int counter = 0;
         for (int i = 0; i < RND_NUM_OF_BLACK_SQUARES; i++) {
                 while (true) {
+                    ++counter;
                     int x = RND.nextInt(GRID_SIZE);
                     int y = RND.nextInt(GRID_SIZE);
                     Coordinate coordinate = new Coordinate(x,y);
@@ -40,6 +42,7 @@ public class Table2 {
                     }
                 }
             }
+        System.out.println(counter);
         }
 
     private void insertBlackSquare(Coordinate coord) {
@@ -50,13 +53,7 @@ public class Table2 {
         int x = coordinate.getxCoord();
         int y = coordinate.getyCoord();
 
-        /*if (x == 1 || x == GRID_SIZE - 2 || y == 1 || y == GRID_SIZE - 2) {
-            return false;
-        }
-         */
-
         for (Coordinate secCoord : coordinates) {
-
 
             int xDiff = Math.abs(x - secCoord.getxCoord());
             int yDiff = Math.abs(y - secCoord.getyCoord());
@@ -65,12 +62,8 @@ public class Table2 {
                 return false;
             }
         }
-
-        //coordinates.add(coordinate);
         return true;
     }
-
-
 
 private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
         for (Coordinate secCoord : coordinates) {
@@ -82,9 +75,11 @@ private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
 }
 
     private List<Coordinate> genCoords() {
+        int counter = 0;
         //Ha GRID_SIZE fekete van és csak egyetlen egy van minden sorban és oszlopban,akk nincs üres sor
         for (int i = 0; i < GRID_SIZE; i++) {
             while (true) {
+                ++counter;
                 int x = RND.nextInt(GRID_SIZE);
                 int y = i;
                 Coordinate coordinate = new Coordinate(x,y);
@@ -94,6 +89,7 @@ private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
                 }
             }
         }
+        System.out.println(counter);
         return coordinates;
     }
 
