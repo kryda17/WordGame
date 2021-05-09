@@ -6,22 +6,18 @@ public class Table2 {
 
     private static final int GRID_SIZE = 10;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
-    private static final int MIN_BLACK_SQUARES = GRID_SIZE;
-    private static final Random RND = new Random();
-    private static final int RND_NUM_OF_BLACK_SQUARES = RND.nextInt(MIN_BLACK_SQUARES);
-
+    private static final int MIN_BLACK_SQUARES = GRID_SIZE; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
 
     private List<Coordinate> coordinates = new ArrayList<>();
-    private String[][] table;
+    private String[][] table = new String[GRID_SIZE][GRID_SIZE];
+    private Random rnd = new Random();
 
     public Table2() {
-        table = new String[GRID_SIZE][GRID_SIZE];
         makeBlackSquares();
-        //searchAndFillEmpytLines();
     }
 
     private void makeBlackSquares() {
-        coordinates = genCoords();
+        genCoords();
         fillWithRandomBlacks();
         for (int i = 0; i < coordinates.size(); i++) {
             insertBlackSquare(coordinates.get(i));
@@ -30,11 +26,12 @@ public class Table2 {
 
     private void fillWithRandomBlacks() {
         int counter = 0;
-        for (int i = 0; i < RND_NUM_OF_BLACK_SQUARES; i++) {
+        int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES);
+        for (int i = 0; i < rnd_num_of_black_squares; i++) {
                 while (true) {
                     ++counter;
-                    int x = RND.nextInt(GRID_SIZE);
-                    int y = RND.nextInt(GRID_SIZE);
+                    int x = rnd.nextInt(GRID_SIZE);
+                    int y = rnd.nextInt(GRID_SIZE);
                     Coordinate coordinate = new Coordinate(x,y);
                     if (isGeneratedCoordDifferenceMinTwo(coordinate)) {
                         coordinates.add(coordinate);
@@ -74,13 +71,13 @@ private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
         return false;
 }
 
-    private List<Coordinate> genCoords() {
+    private void genCoords() {
         int counter = 0;
         //Ha GRID_SIZE fekete van és csak egyetlen egy van minden sorban és oszlopban,akk nincs üres sor
         for (int i = 0; i < GRID_SIZE; i++) {
             while (true) {
                 ++counter;
-                int x = RND.nextInt(GRID_SIZE);
+                int x = rnd.nextInt(GRID_SIZE);
                 int y = i;
                 Coordinate coordinate = new Coordinate(x,y);
                 if (!isRowColAlreadyContainsBlack(coordinate) && isGeneratedCoordDifferenceMinTwo(coordinate)) {
@@ -90,7 +87,6 @@ private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
             }
         }
         System.out.println(counter);
-        return coordinates;
     }
 
     public void printTable() {
