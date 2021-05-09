@@ -39,7 +39,8 @@ public class Table2 {
                     }
                 }
             }
-        System.out.println(counter);
+        System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " + counter + " iteráció");
+        System.out.println();
         }
 
     private void insertBlackSquare(Coordinate coord) {
@@ -62,14 +63,14 @@ public class Table2 {
         return true;
     }
 
-private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
-        for (Coordinate secCoord : coordinates) {
-            if ((coord.getyCoord() == secCoord.getyCoord()) || (coord.getxCoord() == secCoord.getxCoord())) {
-                return true;
-            }
-        }
-        return false;
-}
+    private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
+           for (Coordinate secCoord : coordinates) {
+             if ((coord.getyCoord() == secCoord.getyCoord()) || (coord.getxCoord() == secCoord.getxCoord())) {
+                 return true;
+             }
+          }
+          return false;
+    }
 
     private void genCoords() {
         int counter = 0;
@@ -86,7 +87,7 @@ private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
                 }
             }
         }
-        System.out.println(counter);
+        System.out.println(GRID_SIZE + " fekete kocka: " + counter + " iteráció");
     }
 
     public void printTable() {
