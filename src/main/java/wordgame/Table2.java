@@ -27,19 +27,17 @@ public class Table2 {
     private void fillWithRandomBlacks() {
         int counter = 0;
         int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES);
-        for (int i = 0; i < rnd_num_of_black_squares; i++) {
-                while (true) {
+        int allRequiredBlackSquare = MIN_BLACK_SQUARES + rnd_num_of_black_squares;
+                while (coordinates.size() < allRequiredBlackSquare) {
                     ++counter;
                     int x = rnd.nextInt(GRID_SIZE);
                     int y = rnd.nextInt(GRID_SIZE);
                     Coordinate coordinate = new Coordinate(x,y);
                     if (isGeneratedCoordDifferenceMinTwo(coordinate)) {
                         coordinates.add(coordinate);
-                        break;
                     }
                 }
-            }
-        System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " + counter + " iteráció");
+        System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + coordinates.size());
         System.out.println();
         }
 
@@ -87,7 +85,7 @@ public class Table2 {
                 }
             }
         }
-        System.out.println(GRID_SIZE + " fekete kocka: " + counter + " iteráció");
+        System.out.println(GRID_SIZE + " fekete kocka: " + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + coordinates.size());
     }
 
     public void printTable() {
