@@ -19,7 +19,7 @@ public class WordGameDAO {
             MariaDbDataSource dataSource = new MariaDbDataSource();
             dataSource.setUrl("jdbc:mariadb://localhost:3306/employees?useUnicode=true");
             dataSource.setUser("root");
-            dataSource.setPassword("");
+            dataSource.setPassword("Gkc5167943m");
             ds = dataSource;
         } catch (SQLException sqle) {
             throw new IllegalStateException("Can't connect to the database.", sqle);
@@ -29,9 +29,10 @@ public class WordGameDAO {
     //Beszúr egy vagy több szót az adatbázisba. String split()-kor hasznos a varargs
     public void addWords(String... words) {
         try (Connection conn = ds.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO wordgame (word) VALUES (?)")) {
+             PreparedStatement ps = conn.prepareStatement("INSERT INTO wordgame (word, word_len) VALUES (?, ?)")) {
             for (String word : words) {
                 ps.setString(1, word);
+                ps.setInt(2, word.length());
                 ps.executeUpdate();
             }
         } catch (SQLException sqle) {
@@ -52,16 +53,19 @@ public class WordGameDAO {
         }
     }
 
-    public List<String> queryWords() {
+    public List<String> queryWordsWithLenght(int length) {
         try(Connection conn = ds.getConnection();
-            Statement stmnt = conn.createStatement();
-            ResultSet rs = stmnt.executeQuery("SELECT word FROM wordgame")) {
-
-            List<String> words = new ArrayList<>();
-            while(rs.next()) {
-                words.add(rs.getString("word"));
+            PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ?")) {
+            ps.setInt(1, length);
+            try(ResultSet rs = ps.executeQuery()) {
+                List<String> words = new ArrayList<>();
+                while (rs.next()) {
+                    words.add(rs.getString("word"));
+                }
+                return words;
+            } catch (SQLException sqle) {
+                throw new IllegalStateException("Can't read the database.");
             }
-            return words;
 
         } catch (SQLException sqle) {
             throw new IllegalStateException("Can't write in database.", sqle);
