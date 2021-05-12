@@ -1,4 +1,6 @@
-package wordgame;
+package wordgame.chris;
+
+import wordgame.Coordinate;
 
 import java.util.*;
 
@@ -9,7 +11,7 @@ public class Table2 {
     private static final String EMPTY_GRID_PLACEHOLDER = "0";
     private static final int MIN_BLACK_SQUARES = GRID_SIZE; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
 
-    private List<Coordinate> coordinates = new ArrayList<>();
+    private List<wordgame.Coordinate> coordinates = new ArrayList<>();
     private String[][] table = new String[GRID_SIZE][GRID_SIZE];
     private Random rnd = new Random(1);
 
@@ -47,7 +49,7 @@ public class Table2 {
                     ++counter;
                     int x = rnd.nextInt(GRID_SIZE);
                     int y = rnd.nextInt(GRID_SIZE);
-                    Coordinate coordinate = new Coordinate(x,y);
+                    wordgame.Coordinate coordinate = new wordgame.Coordinate(x,y);
                     if (isGeneratedCoordDifferenceMinTwo(coordinate)) {
                         coordinates.add(coordinate);
                     }
@@ -56,7 +58,7 @@ public class Table2 {
         System.out.println();
         }
 
-    private void insertBlackSquare(Coordinate coord) {
+    private void insertBlackSquare(wordgame.Coordinate coord) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
         if (isCoordinateFilled(coord)) {
@@ -65,7 +67,7 @@ public class Table2 {
         table[x][y] = BLACK_GRID_PLACEHOLDER;
     }
 
-    private boolean isCoordinateFilled(Coordinate coord) {
+    private boolean isCoordinateFilled(wordgame.Coordinate coord) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
         if (BLACK_GRID_PLACEHOLDER.equals(table[x][y]) || !EMPTY_GRID_PLACEHOLDER.equals(table[x][y])) {
@@ -76,7 +78,7 @@ public class Table2 {
         return false;
     }
 
-    public void insertString(String s, Coordinate coord) {
+    public void insertString(String s, wordgame.Coordinate coord) {
         /*if (isCoordinateFilled(coord)) {
             throw new IllegalStateException("Kitöltött kockára írás hiba.");
         }
@@ -85,25 +87,25 @@ public class Table2 {
         table[coord.getxCoord()][coord.getyCoord()] = s;
     }
 
-    public void fillWordFromCoordinate(String s, Coordinate coord, Alignment alignment) {
+    public void fillWordFromCoordinate(String s, wordgame.Coordinate coord, Alignment alignment) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
             if (alignment.equals(Alignment.VERTICAL)) {
                 for (int i = 0; i < s.length(); i++) {
-                    insertString(String.valueOf(s.charAt(i)), new Coordinate(x++,y));
+                    insertString(String.valueOf(s.charAt(i)), new wordgame.Coordinate(x++,y));
                 }
             } else {
                 for (int i = 0; i < s.length(); i++) {
-                    insertString(String.valueOf(s.charAt(i)), new Coordinate(x,y++));
+                    insertString(String.valueOf(s.charAt(i)), new wordgame.Coordinate(x,y++));
                 }
             }
     }
 
-    private boolean isGeneratedCoordDifferenceMinTwo(Coordinate coordinate) {
+    private boolean isGeneratedCoordDifferenceMinTwo(wordgame.Coordinate coordinate) {
         int x = coordinate.getxCoord();
         int y = coordinate.getyCoord();
 
-        for (Coordinate secCoord : coordinates) {
+        for (wordgame.Coordinate secCoord : coordinates) {
 
             int xDiff = Math.abs(x - secCoord.getxCoord());
             int yDiff = Math.abs(y - secCoord.getyCoord());
@@ -115,8 +117,8 @@ public class Table2 {
         return true;
     }
 
-    private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
-           for (Coordinate secCoord : coordinates) {
+    private boolean isRowColAlreadyContainsBlack(wordgame.Coordinate coord) {
+           for (wordgame.Coordinate secCoord : coordinates) {
              if ((coord.getyCoord() == secCoord.getyCoord()) || (coord.getxCoord() == secCoord.getxCoord())) {
                  return true;
              }
@@ -132,7 +134,7 @@ public class Table2 {
                 ++counter;
                 int x = rnd.nextInt(GRID_SIZE);
                 int y = i;
-                Coordinate coordinate = new Coordinate(x,y);
+                wordgame.Coordinate coordinate = new wordgame.Coordinate(x,y);
                 if (!isRowColAlreadyContainsBlack(coordinate) && isGeneratedCoordDifferenceMinTwo(coordinate)) {
                     coordinates.add(coordinate);
                     break;
@@ -143,12 +145,12 @@ public class Table2 {
     }
 
     public List<WordLengthFromCoordinate> requiredHorWordsLength() {
-        List<Coordinate> coordinates = new ArrayList<>();
+        List<wordgame.Coordinate> coordinates = new ArrayList<>();
         List<Integer> wordLength = new ArrayList<>();
             int counter = 0;
             for (int i = 0; i < GRID_SIZE; i++) {
                 if (!Table2.BLACK_GRID_PLACEHOLDER.equals(table[i][0])) {
-                    coordinates.add(new Coordinate(i+ 1, 0));
+                    coordinates.add(new wordgame.Coordinate(i+ 1, 0));
                 }
                 if (counter > 0) {
                     wordLength.add(counter);
@@ -156,7 +158,7 @@ public class Table2 {
                 }
                 for (int j = 0; j < GRID_SIZE; j++) {
                     if (Table2.BLACK_GRID_PLACEHOLDER.equals(table[i][j])) {
-                        Coordinate coordinate = new Coordinate(i, j + 1);
+                        wordgame.Coordinate coordinate = new wordgame.Coordinate(i, j + 1);
                         if (j != GRID_SIZE - 1) {
                             //Coordinate coordinate2 = new Coordinate(i, j + 1);
                             coordinates.add(coordinate);
@@ -174,12 +176,12 @@ public class Table2 {
     }
 
     public List<WordLengthFromCoordinate> requiredVerticalWordsLength() {
-        List<Coordinate> coordinates = new ArrayList<>();
+        List<wordgame.Coordinate> coordinates = new ArrayList<>();
         List<Integer> wordLength = new ArrayList<>();
         int counter = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
             if (!Table2.BLACK_GRID_PLACEHOLDER.equals(table[0][i])) {
-                coordinates.add(new Coordinate(0, i + 1));
+                coordinates.add(new wordgame.Coordinate(0, i + 1));
             }
             if (counter > 0) {
                 wordLength.add(counter);
@@ -187,7 +189,7 @@ public class Table2 {
             }
             for (int j = 0; j < GRID_SIZE; j++) {
                 if (Table2.BLACK_GRID_PLACEHOLDER.equals(table[j][i])) {
-                    Coordinate coordinate = new Coordinate(j + 1, i);
+                    wordgame.Coordinate coordinate = new wordgame.Coordinate(j + 1, i);
                     if (j != GRID_SIZE - 1) {
                         //Coordinate coordinate2 = new Coordinate(i, j + 1);
                         coordinates.add(coordinate);
@@ -204,7 +206,7 @@ public class Table2 {
         return func(coordinates, wordLength);
     }
 
-    public List<WordLengthFromCoordinate> func(List<Coordinate> coordinates, List<Integer> len) {
+    public List<WordLengthFromCoordinate> func(List<wordgame.Coordinate> coordinates, List<Integer> len) {
         List<WordLengthFromCoordinate> wordLengthFromCoordinates = new ArrayList<>();
         for (int i = 0; i < coordinates.size(); i++) {
             Coordinate coordinate = coordinates.get(i);

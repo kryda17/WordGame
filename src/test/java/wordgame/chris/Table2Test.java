@@ -1,14 +1,17 @@
-package wordgame;
+package wordgame.chris;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
+import wordgame.Coordinate;
+import wordgame.WordGameDAO;
+import wordgame.chris.Alignment;
+import wordgame.chris.Table2;
+import wordgame.chris.VerticalWordsGenerator;
 
 class Table2Test {
 
-    private WordGameDAO wordGameDAO;
+    private wordgame.WordGameDAO wordGameDAO;
 
     @BeforeEach
     void init() {
@@ -28,7 +31,7 @@ class Table2Test {
 
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak.txt", " ");
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak2.txt", "\n");
-        table.fillWordFromCoordinate("TE", new Coordinate(0,1), Alignment.HORISONTAL);
+        table.fillWordFromCoordinate("TE", new wordgame.Coordinate(0,1), Alignment.HORISONTAL);
         table.printTable();
         table.fillWordFromCoordinate("MI", new Coordinate(1,0), Alignment.VERTICAL);
         table.printTable();

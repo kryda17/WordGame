@@ -1,4 +1,4 @@
-package wordgame;
+package wordgame.chris;
 
 public enum Alignment {
 

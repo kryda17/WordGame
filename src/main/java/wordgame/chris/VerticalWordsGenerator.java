@@ -1,4 +1,4 @@
-package wordgame;
+package wordgame.chris;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

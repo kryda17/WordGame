@@ -1,13 +1,15 @@
-package wordgame;
+package wordgame.chris;
+
+import wordgame.Coordinate;
 
 import java.util.List;
 
 public class WordLengthFromCoordinate {
 
-    private Coordinate coordinate;
+    private wordgame.Coordinate coordinate;
     private int wordLength;
 
-    public WordLengthFromCoordinate(Coordinate coordinate, int wordLength) {
+    public WordLengthFromCoordinate(wordgame.Coordinate coordinate, int wordLength) {
         this.coordinate = coordinate;
         this.wordLength = wordLength;
     }
