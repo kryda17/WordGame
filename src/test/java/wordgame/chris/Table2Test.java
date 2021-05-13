@@ -26,12 +26,12 @@ class Table2Test {
 
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak.txt", " ");
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak2.txt", "\n");
-        table.fillWordFromCoordinate("TE", new Coordinate(0,1), Alignment.HORISONTAL);
+        table.fillWordFromCoordinate("TE", new Coordinate(0,2), Alignment.HORISONTAL);
         table.printTable();
-        table.fillWordFromCoordinate("MI", new Coordinate(1,0), Alignment.VERTICAL);
+        table.fillWordFromCoordinate("MI", new Coordinate(0,2), Alignment.VERTICAL);
         table.printTable();
-        table.requiredHorWordsLength();
-        table.requiredVerticalWordsLength();
+        table.requiredHorWordsLengthAndStartingCoord();
+        table.requiredVerticalWordsLengthAndStartingCoord();
     }
 
 }

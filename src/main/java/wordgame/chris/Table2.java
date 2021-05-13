@@ -8,6 +8,7 @@ public class Table2 {
     private static final String BLACK_GRID_PLACEHOLDER = "#";
     private static final String EMPTY_GRID_PLACEHOLDER = "0";
     private static final int MIN_BLACK_SQUARES = GRID_SIZE; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
+    private static final int MIN_ADDITIONAL_BLACK_SQUARE = GRID_SIZE / 2;
 
     private List<Coordinate> blackCoordinates = new ArrayList<>();
     private String[][] table = new String[GRID_SIZE][GRID_SIZE];
@@ -39,11 +40,11 @@ public class Table2 {
     }
 
     private void generateAdditionalRandomBlacks() {
-        int counter = 0;
-        int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES) + GRID_SIZE / 2;
+        int counter = 0; //ideiglenes
+        int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES) + MIN_ADDITIONAL_BLACK_SQUARE;
         int allRequiredBlackSquare = MIN_BLACK_SQUARES + rnd_num_of_black_squares;
                 while (blackCoordinates.size() < allRequiredBlackSquare) {
-                    ++counter;
+                    ++counter; //ideiglenes
                     int x = rnd.nextInt(GRID_SIZE);
                     int y = rnd.nextInt(GRID_SIZE);
                     Coordinate coordinate = new Coordinate(x,y);
@@ -51,8 +52,9 @@ public class Table2 {
                         blackCoordinates.add(coordinate);
                     }
                 }
-        System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());
-        System.out.println();
+        System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " +       //ideiglenes
+                + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());    //ideiglenes
+        System.out.println();  //ideiglenes
         }
 
     private void insertBlackSquare(Coordinate coord) {
@@ -74,26 +76,23 @@ public class Table2 {
     }
 
     public void insertString(String s, Coordinate coord) {
-        /*if (isCoordinateFilled(coord)) {
-            throw new IllegalStateException("Kitöltött kockára írás hiba.");
+        if (isCoordinateFilled(coord)) {
+            throw new IllegalStateException("Fekete kockára írás hiba.");
         }
-
-         */
         table[coord.getxCoord()][coord.getyCoord()] = s;
     }
 
     public void fillWordFromCoordinate(String s, Coordinate coord, Alignment alignment) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
+        for (int i = 0; i < s.length(); i++) {
+            insertString(String.valueOf(s.charAt(i)), new Coordinate(x,y));
             if (alignment.equals(Alignment.VERTICAL)) {
-                for (int i = 0; i < s.length(); i++) {
-                    insertString(String.valueOf(s.charAt(i)), new Coordinate(x++,y));
-                }
+                x++;
             } else {
-                for (int i = 0; i < s.length(); i++) {
-                    insertString(String.valueOf(s.charAt(i)), new Coordinate(x,y++));
-                }
+                y++;
             }
+        }
     }
 
     private boolean isGeneratedCoordDifferenceMinTwo(Coordinate coordinate) {
@@ -101,10 +100,8 @@ public class Table2 {
         int y = coordinate.getyCoord();
 
         for (Coordinate secCoord : blackCoordinates) {
-
             int xDiff = Math.abs(x - secCoord.getxCoord());
             int yDiff = Math.abs(y - secCoord.getyCoord());
-
             if ((xDiff == 0 && yDiff < 3) || (yDiff == 0 && xDiff < 3)) {
                 return false;
             }
@@ -122,11 +119,11 @@ public class Table2 {
     }
 
     private void generateRndBlacks() {
-        int counter = 0;
+        int counter = 0; //ideiglenes
         //Ha GRID_SIZE fekete van és csak egyetlen egy van minden sorban és oszlopban,akk nincs üres sor
         for (int i = 0; i < GRID_SIZE; i++) {
             while (true) {
-                ++counter;
+                ++counter; //ideiglenes
                 int x = rnd.nextInt(GRID_SIZE);
                 int y = i;
                 Coordinate coordinate = new Coordinate(x,y);
@@ -136,10 +133,11 @@ public class Table2 {
                 }
             }
         }
-        System.out.println(GRID_SIZE + " fekete kocka: " + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());
+        System.out.println(GRID_SIZE + " fekete kocka: " + counter +    //ideiglenes
+                " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());     //ideiglenes
     }
 
-    public List<WordLengthFromCoordinate> requiredHorWordsLength() {
+    public List<WordLengthFromCoordinate> requiredHorWordsLengthAndStartingCoord() {
         List<Coordinate> coordinates = new ArrayList<>();
         List<Integer> wordLength = new ArrayList<>();
             int counter = 0;
@@ -172,10 +170,10 @@ public class Table2 {
                     ++counter;
                 }
             }
-        return func(coordinates, wordLength);
+        return mergeStartingCoordsWithWordsLength(coordinates, wordLength, Alignment.HORISONTAL);
     }
 
-    public List<WordLengthFromCoordinate> requiredVerticalWordsLength() {
+    public List<WordLengthFromCoordinate> requiredVerticalWordsLengthAndStartingCoord() {
         List<Coordinate> coordinates = new ArrayList<>();
         List<Integer> wordLength = new ArrayList<>();
         int counter = 0;
@@ -207,16 +205,16 @@ public class Table2 {
                 ++counter;
             }
         }
-        return func(coordinates, wordLength);
+        return mergeStartingCoordsWithWordsLength(coordinates, wordLength, Alignment.VERTICAL);
     }
 
     //
-    private List<WordLengthFromCoordinate> func(List<Coordinate> coordinates, List<Integer> len) {
+    private List<WordLengthFromCoordinate> mergeStartingCoordsWithWordsLength(List<Coordinate> coordinates, List<Integer> wordLengths, Alignment alignment) {
         List<WordLengthFromCoordinate> wordLengthFromCoordinates = new ArrayList<>();
         for (int i = 0; i < coordinates.size(); i++) {
             Coordinate coordinate = coordinates.get(i);
-            int length = len.get(i);
-            wordLengthFromCoordinates.add(new WordLengthFromCoordinate(coordinate, length));
+            int length = wordLengths.get(i);
+            wordLengthFromCoordinates.add(new WordLengthFromCoordinate(coordinate, length, alignment));
         }
         return wordLengthFromCoordinates;
     }
