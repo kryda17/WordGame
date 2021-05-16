@@ -2,19 +2,19 @@ package wordgame.chris;
 
 public class Coordinate {
 
-    private int xCoord;
-    private int yCoord;
+    private int x;
+    private int y;
 
-    public Coordinate(int xCoord, int yCoord) {
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+    public Coordinate(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public int getxCoord() {
-        return xCoord;
+    public int getX() {
+        return x;
     }
 
-    public int getyCoord() {
-        return yCoord;
+    public int getY() {
+        return y;
     }
 }

@@ -5,10 +5,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wordgame.chris.helpers.VerticalWordsGenerator;
 
+import java.util.Random;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Table2Test {
 
+    private Table2 table2 = new Table2(new Random(1));
     private WordGameDAO wordGameDAO;
 
     @BeforeEach
@@ -21,28 +24,35 @@ class Table2Test {
 
     @Test
     void testPrint() {
-        Table2 table = new Table2();
-        table.printTable();
+
+        table2.printTable();
 
         VerticalWordsGenerator v = new VerticalWordsGenerator();
-        v.fillDBFromHorisontalWords(table.getTable());
+        v.fillDBFromHorisontalWords(table2.getTable());
 
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak.txt", " ");
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak2.txt", "\n");
-        table.requiredHorWordsLengthAndStartingCoord();
-        table.requiredVerticalWordsLengthAndStartingCoord();
+
     }
 
     @Test
     void likeMakerTest() {
-        Table2 table2 = new Table2();
         String lkePattern = table2.likePatternMaker(new WordLengthFromCoordinate(new Coordinate(0,1), 2, Alignment.VERTICAL));
         assertEquals("__", lkePattern);
     }
 
     @Test
+    void wordLengthFromStartingCoordTest() {
+        int wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(1,0), Alignment.HORISONTAL);
+        assertEquals(8, wordLength);
+        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(13,0), Alignment.HORISONTAL);
+        assertEquals(2, wordLength);
+
+
+    }
+
+    @Test
     void wordWriterTest() {
-        Table2 table2 = new Table2();
         table2.fillWordFromCoordinate("TE", new Coordinate(0,1), Alignment.VERTICAL);
         table2.fillWordFromCoordinate("MI", new Coordinate(13,0), Alignment.HORISONTAL);
         table2.printTable();
