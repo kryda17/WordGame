@@ -76,24 +76,63 @@ public class Table2 {
     }
 
     public void insertString(String s, Coordinate coord) {
-        if (isCoordinateFilled(coord)) {
-            throw new IllegalStateException("Fekete kockára írás hiba.");
+        int x = coord.getxCoord();
+        int y = coord.getyCoord();
+        if (isCoordinateFilled(coord) || (!s.equals(table[y][x]) && !table[y][x].equals(EMPTY_GRID_PLACEHOLDER))) {
+           throw new IllegalStateException("Írás hiba.");
         }
-        table[coord.getxCoord()][coord.getyCoord()] = s;
+        table[y][x] = s;
     }
 
     public void fillWordFromCoordinate(String s, Coordinate coord, Alignment alignment) {
         int x = coord.getxCoord();
         int y = coord.getyCoord();
         for (int i = 0; i < s.length(); i++) {
-            insertString(String.valueOf(s.charAt(i)), new Coordinate(x,y));
+                insertString(String.valueOf(s.charAt(i)), new Coordinate(x, y));
             if (alignment.equals(Alignment.VERTICAL)) {
-                x++;
-            } else {
                 y++;
+            } else {
+                x++;
             }
         }
     }
+
+    public boolean checkStringWrite(String s, Coordinate coord, Alignment alignment) {
+        int x = coord.getxCoord();
+        int y = coord.getyCoord();
+        for (int i = 0; i < s.length(); i++) {
+                if (isCoordinateFilled(coord) || (!s.equals(table[y][x]) || !EMPTY_GRID_PLACEHOLDER.equals(s))) {
+                    return false;
+                }
+            if (alignment.equals(Alignment.VERTICAL)) {
+                y++;
+            } else {
+                x++;
+            }
+        }
+        return true;
+    }
+
+    public String likePatternMaker(WordLengthFromCoordinate wordLengthFromCoordinate) {
+        int x = wordLengthFromCoordinate.getCoordinate().getxCoord();
+        int y = wordLengthFromCoordinate.getCoordinate().getyCoord();
+        String like = "";
+        for (int i = 0; i < wordLengthFromCoordinate.getWordLength(); i++) {
+            if (EMPTY_GRID_PLACEHOLDER.equals(table[y][x])) {
+                like += "_";
+            } else {
+                like += table[y][x];
+            }
+            if (wordLengthFromCoordinate.getAlignment().equals(Alignment.VERTICAL)) {
+                y++;
+            } else {
+                x++;
+            }
+        }
+        return like;
+    }
+    
+
 
     private boolean isGeneratedCoordDifferenceMinTwo(Coordinate coordinate) {
         int x = coordinate.getxCoord();
@@ -141,47 +180,14 @@ public class Table2 {
         List<Coordinate> coordinates = new ArrayList<>();
         List<Integer> wordLength = new ArrayList<>();
             int counter = 0;
-            for (int i = 0; i < GRID_SIZE; i++) {
-                //Ha az új sor kezdete nem fekete kocka,akkor új szó kezdődik
-                if (!Table2.BLACK_GRID_PLACEHOLDER.equals(table[i][0])) {
-                    //lehet nem i + 1,hanem csak i
-                    coordinates.add(new Coordinate(i+ 1, 0));
-                }
-                //Ha az előző sorban volt betű
-                if (counter > 0) {
-                    wordLength.add(counter);
-                    counter = 0;
-                }
-                for (int j = 0; j < GRID_SIZE; j++) {
-                    //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
-                    if (Table2.BLACK_GRID_PLACEHOLDER.equals(table[i][j])) {
-                        Coordinate coordinate = new Coordinate(i, j + 1);
-                        //Ha az sorban az utolsó kocka fekete,akk nem adja hozzá a koordinátát a szó kezdeteként
-                        if (j != GRID_SIZE - 1) {
-                            //Coordinate coordinate2 = new Coordinate(i, j + 1);
-                            coordinates.add(coordinate);
-                        }
-                        if (counter > 0) {
-                            wordLength.add(counter);
-                            counter = 0;
-                        }
-                        continue;
-                    }
-                    ++counter;
-                }
-            }
-        return mergeStartingCoordsWithWordsLength(coordinates, wordLength, Alignment.HORISONTAL);
-    }
-
-    public List<WordLengthFromCoordinate> requiredVerticalWordsLengthAndStartingCoord() {
-        List<Coordinate> coordinates = new ArrayList<>();
-        List<Integer> wordLength = new ArrayList<>();
-        int counter = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
+
+
             //Ha az új sor nem fekete kocka,akkor új szó kezdődik
-            if (!Table2.BLACK_GRID_PLACEHOLDER.equals(table[0][i])) {
-                //lehet nem i + 1,hanem csak i
-                coordinates.add(new Coordinate(0, i + 1));
+            if (!BLACK_GRID_PLACEHOLDER.equals(table[i][0])) {
+                Coordinate coordinateOut = new Coordinate(0, i);
+                coordinates.add(coordinateOut);
+
             }
             //Ha az előző sorban volt betű
             if (counter > 0) {
@@ -190,22 +196,97 @@ public class Table2 {
             }
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
-                if (Table2.BLACK_GRID_PLACEHOLDER.equals(table[j][i])) {
-                    Coordinate coordinate = new Coordinate(j + 1, i);
-                    if (j != GRID_SIZE - 1) {
-                        //Coordinate coordinate2 = new Coordinate(i, j + 1);
-                        coordinates.add(coordinate);
-                    }
+                if (BLACK_GRID_PLACEHOLDER.equals(table[i][j]) && j + 1 < GRID_SIZE) {
+                    coordinates.add(new Coordinate(j + 1, i));
                     if (counter > 0) {
                         wordLength.add(counter);
                         counter = 0;
                     }
-                    continue;
+                    //continue;
+                } else {
+                    ++counter;
                 }
-                ++counter;
+
             }
         }
+        if (counter > 0) {
+            wordLength.add(counter);
+        }
+        return mergeStartingCoordsWithWordsLength(coordinates, wordLength, Alignment.HORISONTAL);
+    }
+
+
+    public List<WordLengthFromCoordinate> requiredVerticalWordsLengthAndStartingCoord() {
+        List<Coordinate> coordinates = new ArrayList<>();
+        List<Integer> wordLength = new ArrayList<>();
+        int counter = 0;
+        for (int i = 0; i < GRID_SIZE; i++) {
+
+
+            //Ha az új sor nem fekete kocka,akkor új szó kezdődik
+            if (!BLACK_GRID_PLACEHOLDER.equals(table[0][i])) {
+                Coordinate coordinateOut = new Coordinate(i, 0);
+                coordinates.add(coordinateOut);
+
+            }
+            //Ha az előző sorban volt betű
+            if (counter > 0) {
+                wordLength.add(counter);
+                counter = 0;
+            }
+            for (int j = 0; j < GRID_SIZE; j++) {
+                //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
+                if (BLACK_GRID_PLACEHOLDER.equals(table[j][i]) && j + 1 < GRID_SIZE) {
+                    coordinates.add(new Coordinate(i, j + 1));
+                    if (counter > 0) {
+                        wordLength.add(counter);
+                        counter = 0;
+                    }
+                    //continue;
+                } else {
+                    ++counter;
+                }
+
+            }
+        }
+        if (counter > 0) {
+            wordLength.add(counter);
+        }
         return mergeStartingCoordsWithWordsLength(coordinates, wordLength, Alignment.VERTICAL);
+    }
+    
+   /* public void func(VerAndHorWordsLengthsFromCoordinates coordinates) {
+        WordGameDAO dao = new WordGameDAO();
+
+        for (int i = 0; i < GRID_SIZE; i++) {
+            List<WordLengthFromCoordinate> line = coordinates.howMany(i, coordinates.getWordLengthFromCoordinatesHorisontal());
+            for (int j = 0; j < line.size(); j++) {
+                List<String> words = dao.queryWordsWithLenght(line.get(j).getWordLength());
+                fillLine()
+                //fillWordFromCoordinate(coordinates.getWordLengthFromCoordinatesHorisontal().get(j).getCoordinate(), Alignment.HORISONTAL)
+            }
+            for (int k = 0; k < coordinates.howMany(i, coordinates.getWordLengthFromCoordinatesVertical()).size(); k++) {
+
+            }
+        }
+    }
+
+    public boolean fillLine(List<String> words, int loopNum, Coordinate coordinate, Alignment alignment) {
+        for (String item : words) {
+            if (checkStringWrite(item, ))
+            for (int i = 0; i < ; i++) {
+
+            }
+            if (fillWordFromCoordinate(item,coordinate,alignment)) {
+
+            }
+        }
+    }
+
+     */
+
+    public String readCharAtCoordinate(Coordinate coordinate) {
+        return table[coordinate.getyCoord()][coordinate.getxCoord()];
     }
 
     //

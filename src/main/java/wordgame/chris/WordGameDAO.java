@@ -75,6 +75,26 @@ public class WordGameDAO {
         }
     }
 
+    public List<String> queryWordsWithLenghtAndLike(int length, String like) {
+        try(Connection conn = ds.getConnection();
+            PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ? AND word LIKE '?'")) {
+            ps.setInt(1, length);
+            ps.setString(2, like);
+            try(ResultSet rs = ps.executeQuery()) {
+                List<String> words = new ArrayList<>();
+                while (rs.next()) {
+                    words.add(rs.getString("word"));
+                }
+                return words;
+            } catch (SQLException sqle) {
+                throw new IllegalStateException("Can't read the database.");
+            }
+
+        } catch (SQLException sqle) {
+            throw new IllegalStateException("Can't write in database.", sqle);
+        }
+    }
+
     public MariaDbDataSource getDs() {
         return ds;
     }

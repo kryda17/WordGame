@@ -1,4 +1,6 @@
-package wordgame.chris;
+package wordgame.chris.helpers;
+
+import wordgame.chris.Table2;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
