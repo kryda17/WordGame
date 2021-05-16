@@ -85,7 +85,7 @@ public class Table2 {
     public void insertString(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
-        if (isCoordinateFilled(coord) || (!s.equals(table[y][x]) && !table[y][x].equals(EMPTY_GRID_PLACEHOLDER))) {
+        if (isCoordinateFilled(coord) || !s.equals(table[y][x])) {
            throw new IllegalStateException("Írás hiba.");
         }
         table[y][x] = s;
@@ -122,17 +122,17 @@ public class Table2 {
 
 
 
-    public String likePatternMaker(WordLengthFromCoordinate wordLengthFromCoordinate) {
-        int x = wordLengthFromCoordinate.getCoordinate().getX();
-        int y = wordLengthFromCoordinate.getCoordinate().getY();
+    public String likePatternMaker(Coordinate coordinate, Alignment alignment) {
+        int x = coordinate.getX();
+        int y = coordinate.getY();
         String like = "";
-        for (int i = 0; i < wordLengthFromCoordinate.getWordLength(); i++) {
+        for (int i = 0; i < wordLengthFromStartingCoordinate(coordinate, alignment); i++) {
             if (EMPTY_GRID_PLACEHOLDER.equals(table[y][x])) {
                 like += "_";
             } else {
                 like += table[y][x];
             }
-            if (wordLengthFromCoordinate.getAlignment().equals(Alignment.VERTICAL)) {
+            if (alignment.equals(Alignment.VERTICAL)) {
                 y++;
             } else {
                 x++;
@@ -230,7 +230,6 @@ public class Table2 {
                 coordinates.add(new Coordinate(i, 0));
 
             }
-            //Ha az előző sorban volt betű
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (BLACK_GRID_PLACEHOLDER.equals(table[j][i]) && j + 1 < GRID_SIZE) {
@@ -243,7 +242,9 @@ public class Table2 {
     }
 
 
-    public String readCharAtCoordinate(Coordinate coordinate) {
+
+
+    public String readStringAtCoordinate(Coordinate coordinate) {
         return table[coordinate.getY()][coordinate.getX()];
     }
 

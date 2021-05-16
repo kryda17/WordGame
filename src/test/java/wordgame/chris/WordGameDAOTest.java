@@ -3,15 +3,15 @@ package wordgame.chris;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import wordgame.WordGameDAO;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WordGameDAOTest {
 
-    private wordgame.WordGameDAO wordGameDAO;
+    private WordGameDAO wordGameDAO;
 
     @BeforeEach
     void init() {
@@ -40,6 +40,13 @@ class WordGameDAOTest {
     void testReadFromFile() {
         wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources//szövegek/testfile.txt", " ");
         assertEquals(Arrays.asList("Test"), wordGameDAO.queryWordsWithLenght(4));
+    }
+
+    @Test
+    void testLike() {
+        List<String> words = wordGameDAO.queryWordsWithLenghtAndLike(4, "J___");
+        assertEquals(3, words.size());
+        assertEquals("John", words.get(0));
     }
 
 }

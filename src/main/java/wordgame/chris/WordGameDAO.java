@@ -77,7 +77,7 @@ public class WordGameDAO {
 
     public List<String> queryWordsWithLenghtAndLike(int length, String like) {
         try(Connection conn = ds.getConnection();
-            PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ? AND word LIKE '?'")) {
+            PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ? AND word LIKE ?")) {
             ps.setInt(1, length);
             ps.setString(2, like);
             try(ResultSet rs = ps.executeQuery()) {
