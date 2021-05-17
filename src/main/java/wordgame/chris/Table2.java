@@ -91,12 +91,12 @@ public class Table2 {
         table[y][x] = s;
     }
 
-    public void fillWordFromCoordinate(String s, Coordinate coord, Alignment alignment) {
+    public void fillWordFromCoordinate(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
                 insertString(String.valueOf(s.charAt(i)), new Coordinate(x, y));
-            if (alignment.equals(Alignment.VERTICAL)) {
+            if (coord.getAlignment().equals(Alignment.VERTICAL)) {
                 y++;
             } else {
                 x++;
@@ -104,14 +104,14 @@ public class Table2 {
         }
     }
 
-    public boolean checkStringWrite(String s, Coordinate coord, Alignment alignment) {
+    public boolean checkStringWrite(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
                 if (isCoordinateFilled(coord) || (!s.equals(table[y][x]) || !EMPTY_GRID_PLACEHOLDER.equals(s))) {
                     return false;
                 }
-            if (alignment.equals(Alignment.VERTICAL)) {
+            if (coord.getAlignment().equals(Alignment.VERTICAL)) {
                 y++;
             } else {
                 x++;
@@ -122,11 +122,12 @@ public class Table2 {
 
 
 
-    public String likePatternMaker(Coordinate coordinate, Alignment alignment) {
+    public String likePatternMaker(Coordinate coordinate) {
+        Alignment alignment = coordinate.getAlignment();
         int x = coordinate.getX();
         int y = coordinate.getY();
         String like = "";
-        for (int i = 0; i < wordLengthFromStartingCoordinate(coordinate, alignment); i++) {
+        for (int i = 0; i < wordLengthFromStartingCoordinate(coordinate); i++) {
             if (EMPTY_GRID_PLACEHOLDER.equals(table[y][x])) {
                 like += "_";
             } else {
@@ -186,32 +187,34 @@ public class Table2 {
     }
 
     public List<Coordinate> horisontalStartingCoorinates() {
+        Alignment alignment = Alignment.HORISONTAL;
         List<Coordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             //Ha az új sor nem fekete kocka,akkor új szó kezdődik
             if (!BLACK_GRID_PLACEHOLDER.equals(table[i][0])) {
-                coordinates.add(new Coordinate(0, i));
+                coordinates.add(new Coordinate(0, i, alignment));
             }
             //Ha az előző sorban volt betű
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (BLACK_GRID_PLACEHOLDER.equals(table[i][j]) && j + 1 < GRID_SIZE) {
-                    coordinates.add(new Coordinate(j + 1, i));
+                    coordinates.add(new Coordinate(j + 1, i, alignment));
                 }
             }
         }
         return coordinates;
     }
 
-    public int wordLengthFromStartingCoordinate(Coordinate coordinate, Alignment alignment) {
+    public int wordLengthFromStartingCoordinate(Coordinate coordinate) {
         int x = coordinate.getX();
         int y = coordinate.getY();
-        int incCoord = (alignment == Alignment.HORISONTAL) ? x : y;
+        Alignment alignment = coordinate.getAlignment();
+        int incCoord = (alignment.equals(Alignment.HORISONTAL)) ? x : y;
         for (int i = incCoord; i < GRID_SIZE; i++) {
             if (table[y][x].equals(BLACK_GRID_PLACEHOLDER)) {
                 return i - incCoord;
             }
-            if (alignment == Alignment.HORISONTAL) {
+            if (alignment.equals(Alignment.HORISONTAL)) {
                 ++x;
             } else {
                 ++y;
@@ -221,19 +224,20 @@ public class Table2 {
     }
 
     public List<Coordinate> verticalStartingCoordinates() {
+        Alignment alignment = Alignment.VERTICAL;
         List<Coordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
 
 
             //Ha az új sor nem fekete kocka,akkor új szó kezdődik
             if (!BLACK_GRID_PLACEHOLDER.equals(table[0][i])) {
-                coordinates.add(new Coordinate(i, 0));
+                coordinates.add(new Coordinate(i, 0, alignment));
 
             }
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (BLACK_GRID_PLACEHOLDER.equals(table[j][i]) && j + 1 < GRID_SIZE) {
-                    coordinates.add(new Coordinate(i, j + 1));
+                    coordinates.add(new Coordinate(i, j + 1, alignment));
                 }
 
             }

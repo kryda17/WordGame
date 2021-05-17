@@ -22,8 +22,8 @@ class Table2Test {
         flyway.migrate();
         VerticalWordsGenerator v = new VerticalWordsGenerator();
         v.fillDBFromHorisontalWords(table2.getTable());
-        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak.txt", " ");
-        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources/szövegek/szavak2.txt", "\n");
+        wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak.txt", " ");
+        wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak2.txt", "\n");
     }
 
     @Test
@@ -33,19 +33,19 @@ class Table2Test {
 
     @Test
     void likePatternMakerTest() {
-        String lkePattern = table2.likePatternMaker(new Coordinate(0,1), Alignment.VERTICAL);
+        String lkePattern = table2.likePatternMaker(new Coordinate(0,1, Alignment.VERTICAL));
         assertEquals("YK", lkePattern);
     }
 
     @Test
     void wordLengthFromStartingCoordTest() {
-        int wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(1,0), Alignment.HORISONTAL);
+        int wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(1,0,  Alignment.HORISONTAL));
         assertEquals(8, wordLength);
-        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(13,0), Alignment.HORISONTAL);
+        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(13,0, Alignment.HORISONTAL));
         assertEquals(2, wordLength);
-        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(0,1), Alignment.VERTICAL);
+        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(0,1, Alignment.VERTICAL));
         assertEquals(2, wordLength);
-        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(13,0), Alignment.HORISONTAL);
+        wordLength = table2.wordLengthFromStartingCoordinate(new Coordinate(13,13, Alignment.VERTICAL));
         assertEquals(2, wordLength);
 
 
@@ -53,13 +53,13 @@ class Table2Test {
 
     @Test
     void wordWriterTest() {
-        table2.fillWordFromCoordinate("YK", new Coordinate(0,1), Alignment.VERTICAL);
-        table2.fillWordFromCoordinate("US", new Coordinate(13,0), Alignment.HORISONTAL);
+        table2.fillWordFromCoordinate("YK", new Coordinate(0,1, Alignment.VERTICAL));
+        table2.fillWordFromCoordinate("US", new Coordinate(13,0, Alignment.HORISONTAL));
         table2.printTable();
-        assertEquals("Y", table2.readStringAtCoordinate(new Coordinate(0,1)));
-        assertEquals("K", table2.readStringAtCoordinate(new Coordinate(0,2)));
-        assertEquals("U", table2.readStringAtCoordinate(new Coordinate(13,0)));
-        assertEquals("S", table2.readStringAtCoordinate(new Coordinate(14,0)));
+        assertEquals("Y", table2.readStringAtCoordinate(new Coordinate(0,1, Alignment.VERTICAL)));
+        assertEquals("K", table2.readStringAtCoordinate(new Coordinate(0,2, Alignment.VERTICAL)));
+        assertEquals("U", table2.readStringAtCoordinate(new Coordinate(13,0, Alignment.HORISONTAL)));
+        assertEquals("S", table2.readStringAtCoordinate(new Coordinate(14,0, Alignment.HORISONTAL)));
     }
 
 }

@@ -38,14 +38,15 @@ class WordGameDAOTest {
 
     @Test
     void testReadFromFile() {
-        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources//szövegek/testfile.txt", " ");
+        wordGameDAO.addWordsSeperatedBy("src/main/resources//szövegek/testfile.txt", " ");
         assertEquals(Arrays.asList("Test"), wordGameDAO.queryWordsWithLenght(4));
     }
 
     @Test
     void testLike() {
-        List<String> words = wordGameDAO.queryWordsWithLenghtAndLike(4, "J___");
-        assertEquals(3, words.size());
+        wordGameDAO.addWords("John", "Jack");
+        List<String> words = wordGameDAO.queryWordsWithLenghtAndLike(4, "Jo__");
+        assertEquals(1, words.size());
         assertEquals("John", words.get(0));
     }
 
