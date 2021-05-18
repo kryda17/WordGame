@@ -11,7 +11,7 @@ public class VerAndHorWordsLengthsFromCoordinates {
     public VerAndHorWordsLengthsFromCoordinates(List<Coordinate> coordinatesHorisontal, List<Coordinate> coordinatesVertical) {
         this.coordinates = coordinatesHorisontal;
         this.coordinates.addAll(coordinatesVertical);
-        this.coordinates.sort(Comparator.comparingInt(o -> o.getY()));
+        this.coordinates.sort(Comparator.comparingInt(Coordinate::getY).thenComparing(Coordinate::getX));
     }
 
     public List<Coordinate> getCoordinates() {

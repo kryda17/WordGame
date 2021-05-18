@@ -4,11 +4,11 @@ import java.util.*;
 
 public class Table {
 
-    private static final int GRID_SIZE = 10;
+    private static final int GRID_SIZE = 15;
     private static final String BLACK_GRID_PLACEHOLDER = "####";
     private static final int MIN_BLACK_SQUARES = GRID_SIZE * GRID_SIZE / 10;
     //private static final int RANDOM_PLUS_BLACK_SQUARES = 10;
-    private static final Random RND = new Random();
+    private static final Random RND = new Random(1);
 
     private List<Coordinate> coordinates = new ArrayList<>();
     private String[][] table;
