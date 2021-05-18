@@ -6,25 +6,16 @@ import java.util.List;
 
 public class VerAndHorWordsLengthsFromCoordinates {
 
-    private List<WordLengthFromCoordinate> wordLengthFromCoordinatesHorisontal;
-    private List<WordLengthFromCoordinate> wordLengthFromCoordinatesVertical;
+    private List<Coordinate> coordinates;
 
-    public VerAndHorWordsLengthsFromCoordinates(List<WordLengthFromCoordinate> wordLengthFromCoordinatesHorisontal, List<WordLengthFromCoordinate> wordLengthFromCoordinatesVertical) {
-        wordLengthFromCoordinatesHorisontal.sort(Comparator.comparingInt(o -> o.getCoordinate().getX()));
-        this.wordLengthFromCoordinatesHorisontal = wordLengthFromCoordinatesHorisontal;
-        wordLengthFromCoordinatesVertical.sort(Comparator.comparingInt(o -> o.getCoordinate().getY()));
-        this.wordLengthFromCoordinatesVertical = wordLengthFromCoordinatesVertical;
+    public VerAndHorWordsLengthsFromCoordinates(List<Coordinate> coordinatesHorisontal, List<Coordinate> coordinatesVertical) {
+        this.coordinates = coordinatesHorisontal;
+        this.coordinates.addAll(coordinatesVertical);
+        this.coordinates.sort(Comparator.comparingInt(o -> o.getY()));
     }
 
-    public VerAndHorWordsLengthsFromCoordinates() {
-    }
-
-    public List<WordLengthFromCoordinate> getWordLengthFromCoordinatesHorisontal() {
-        return List.copyOf(wordLengthFromCoordinatesHorisontal);
-    }
-
-    public List<WordLengthFromCoordinate> getWordLengthFromCoordinatesVertical() {
-        return List.copyOf(wordLengthFromCoordinatesVertical);
+    public List<Coordinate> getCoordinates() {
+        return coordinates;
     }
 
     public List<WordLengthFromCoordinate> howMany(int loopNum, List<WordLengthFromCoordinate> wordLengthFromCoordinates) {

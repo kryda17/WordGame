@@ -43,7 +43,7 @@ public class WordGameDAO {
         }
     }
 
-    public void addWordsSeperatedBySpaceFromFile(String file, String separator) {
+    public void addWordsSeperatedBy(String file, String separator) {
         Path path = Path.of(file);
         try(BufferedReader br = Files.newBufferedReader(path)) {
             String line;
@@ -76,6 +76,10 @@ public class WordGameDAO {
     }
 
     public List<String> queryWordsWithLenghtAndLike(int length, String like) {
+        String emptyLikePatternFromWordLength = emptyLikePatternMakerFromLength(length);
+        if (like.equals(emptyLikePatternFromWordLength)) {
+            return queryWordsWithLenght(length);
+        }
         try(Connection conn = ds.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ? AND word LIKE ?")) {
             ps.setInt(1, length);
@@ -93,6 +97,14 @@ public class WordGameDAO {
         } catch (SQLException sqle) {
             throw new IllegalStateException("Can't write in database.", sqle);
         }
+    }
+
+    public String emptyLikePatternMakerFromLength(int wordLength) {
+        String like = "";
+        for (int i = 0; i < wordLength; i++) {
+            like += "_";
+        }
+        return like;
     }
 
     public MariaDbDataSource getDs() {

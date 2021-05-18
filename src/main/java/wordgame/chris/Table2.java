@@ -15,15 +15,18 @@ public class Table2 {
     private Random rnd = new Random();
 
     public Table2() {
-        fillTalbeWithEmptys();
-        makeBlackSquares();
+        initTable();
     }
 
     public Table2(Random rnd) {
         this.rnd = rnd;
+        initTable();
+
+    }
+
+    public void initTable() {
         fillTalbeWithEmptys();
         makeBlackSquares();
-
     }
 
     private void fillTalbeWithEmptys() {
@@ -45,6 +48,51 @@ public class Table2 {
             insertBlackSquare(blackCoordinates.get(i));
         }
     }
+
+    public void func(List<Coordinate> coordinates, List<Coordinate> coordinatesVer) {
+        VerAndHorWordsLengthsFromCoordinates verAndHorWordsLengthsFromCoordinates = new VerAndHorWordsLengthsFromCoordinates(coordinates, coordinatesVer);
+        Stack<String> stack = new Stack<>();
+        ListIterator<Coordinate> lit = verAndHorWordsLengthsFromCoordinates.getCoordinates().listIterator();
+        Coordinate coordinate2;
+
+
+
+        while (lit.hasNext()) {
+            coordinate2 = lit.next();
+            boolean found = false;
+            List<String> stringList = new WordGameDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate2), likePatternMaker(coordinate2));
+            if (stringList.isEmpty()) {
+                //stack.pop();
+                coordinate2.clearWords();
+                lit.previous();
+                continue;
+            }
+            for (String item2 : stringList) {
+                if (stack.contains(item2)) {
+                    continue;
+                }
+                if (checkStringWrite(item2, coordinate2)) {
+                    stack.push(item2);
+                    coordinate2.addWord(item2);
+                    found = true;
+                    break;
+                }
+                continue;
+            }
+            if (!found) {
+                //stack.pop();
+               coordinate2.clearWords();
+                lit.previous();
+                continue;
+            }
+
+
+
+        }
+
+        //throw new IllegalStateException("Vége");
+    }
+
 
     private void generateAdditionalRandomBlacks() {
         int counter = 0; //ideiglenes
@@ -82,6 +130,15 @@ public class Table2 {
         return false;
     }
 
+    private boolean isCoordinateBlack(Coordinate coord) {
+        int x = coord.getX();
+        int y = coord.getY();
+        if (BLACK_GRID_PLACEHOLDER.equals(table[y][x])) { //|| !EMPTY_GRID_PLACEHOLDER.equals(table[x][y])
+            return true;
+        }
+        return false;
+    }
+
     public void insertString(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
@@ -108,7 +165,7 @@ public class Table2 {
         int x = coord.getX();
         int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
-                if (isCoordinateFilled(coord) || (!s.equals(table[y][x]) || !EMPTY_GRID_PLACEHOLDER.equals(s))) {
+                if (isCoordinateBlack(coord) || (!s.equals(table[y][x]) && !EMPTY_GRID_PLACEHOLDER.equals(table[y][x]))) {
                     return false;
                 }
             if (coord.getAlignment().equals(Alignment.VERTICAL)) {
@@ -141,6 +198,8 @@ public class Table2 {
         }
         return like;
     }
+
+
     
 
 

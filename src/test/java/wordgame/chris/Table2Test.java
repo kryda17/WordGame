@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import wordgame.chris.helpers.VerticalWordsGenerator;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class Table2Test {
 
     private Table2 table2 = new Table2(new Random(1));
+    private Table2 tabletest = new Table2(new Random(1));
     private WordGameDAO wordGameDAO;
 
     @BeforeEach
@@ -21,9 +23,16 @@ class Table2Test {
         flyway.clean();
         flyway.migrate();
         VerticalWordsGenerator v = new VerticalWordsGenerator();
-        v.fillDBFromHorisontalWords(table2.getTable());
+        v.fillDBFromHorisontalWords(tabletest.getTable());
         wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak.txt", " ");
         wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak2.txt", "\n");
+    }
+
+    @Test
+    void testFunc() {
+        List<Coordinate> coordinates = table2.horisontalStartingCoorinates();
+        List<Coordinate> coordinateList = table2.verticalStartingCoordinates();
+        table2.func(coordinates, coordinateList);
     }
 
     @Test
