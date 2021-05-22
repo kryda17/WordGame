@@ -83,7 +83,7 @@ public class WordGameDAO {
         try(Connection conn = ds.getConnection();
             PreparedStatement ps = conn.prepareStatement("SELECT word FROM wordgame WHERE word_len = ? AND word LIKE ?")) {
             ps.setInt(1, length);
-            ps.setString(2, like);
+            ps.setString(2, like.toUpperCase());
             try(ResultSet rs = ps.executeQuery()) {
                 List<String> words = new ArrayList<>();
                 while (rs.next()) {
@@ -99,7 +99,7 @@ public class WordGameDAO {
         }
     }
 
-    public String emptyLikePatternMakerFromLength(int wordLength) {
+    private String emptyLikePatternMakerFromLength(int wordLength) {
         String like = "";
         for (int i = 0; i < wordLength; i++) {
             like += "_";

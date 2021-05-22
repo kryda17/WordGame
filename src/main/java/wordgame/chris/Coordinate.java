@@ -1,14 +1,12 @@
 package wordgame.chris;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class Coordinate {
 
     private int x;
     private int y;
     private Alignment alignment;
-    private List<String> words = new ArrayList<>();
 
     public Coordinate(int x, int y, Alignment alignment) {
         this.x = x;
@@ -33,16 +31,26 @@ public class Coordinate {
         return alignment;
     }
 
-    public void addWord(String word) {
-        words.add(word);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Coordinate that = (Coordinate) o;
+        return x == that.x && y == that.y && alignment == that.alignment;
     }
 
-    public void clearWords() {
-        words.clear();
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, alignment);
     }
 
-    public List<String> getWords() {
-        return words;
+    @Override
+    public String toString() {
+        String s = "";
+        if (alignment == Alignment.HORISONTAL) {
+            s += "H";
+        }
+        else s += "V";
+        return s+= x + ":" + y;
     }
-
 }
