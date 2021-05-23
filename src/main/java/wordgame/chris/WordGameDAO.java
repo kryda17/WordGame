@@ -34,7 +34,7 @@ public class WordGameDAO {
         try (Connection conn = ds.getConnection();
              PreparedStatement ps = conn.prepareStatement("INSERT INTO wordgame (word, word_len) VALUES (?, ?)")) {
             for (String word : words) {
-                ps.setString(1, word);
+                ps.setString(1, word.toUpperCase());
                 ps.setInt(2, word.length());
                 ps.executeUpdate();
             }

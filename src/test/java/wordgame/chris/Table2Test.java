@@ -69,4 +69,6 @@ class Table2Test {
         assertEquals("S", table2.readStringAtCoordinate(new Coordinate(14,0, Alignment.HORISONTAL)));
     }
 
+
+
 }

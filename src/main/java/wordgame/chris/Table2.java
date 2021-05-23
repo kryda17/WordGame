@@ -67,7 +67,7 @@ public class Table2 {
                 if (example.get(coordinate).getWords().contains(item)) {
                     continue;
                 }
-                if (checkStringWrite(item, coordinate)) {
+                if (isWordWritable(item, coordinate)) {
                     fillWordFromCoordinate(item, coordinate, example.get(coordinate));
                     example.get(coordinate).addWord(item);
                     found = true;
@@ -81,6 +81,7 @@ public class Table2 {
                 lit.previous();
             }
         }
+        System.out.println(counter);
         //throw new IllegalStateException("Vége");
     }
 
@@ -130,7 +131,7 @@ public class Table2 {
         return false;
     }
 
-    public void insertString(String s, Coordinate coord) {
+    public void insertCharacter(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         if (isCoordinateBlack(coord) || (!s.equals(table[y][x]) && !EMPTY_GRID_PLACEHOLDER.equals(table[y][x]))) {
@@ -143,12 +144,12 @@ public class Table2 {
         int x = coord.getX();
         int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
-            String ch = String.valueOf(s.charAt(i)).toUpperCase();
+            String ch = String.valueOf(s.charAt(i));
                 if (EMPTY_GRID_PLACEHOLDER.equals(table[y][x])) {
                     search.addCoordinate(new Coordinate(x,y));
                 }
-            insertString(ch, new Coordinate(x, y));
-            if (coord.getAlignment().equals(Alignment.VERTICAL)) {
+            insertCharacter(ch, new Coordinate(x, y));
+            if (coord.getAlignment() == Alignment.VERTICAL) {
                 y++;
             } else {
                 x++;
@@ -156,11 +157,11 @@ public class Table2 {
         }
     }
 
-    public boolean checkStringWrite(String s, Coordinate coord) {
+    public boolean isWordWritable(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
-            String ch = String.valueOf(s.charAt(i)).toUpperCase();
+            String ch = String.valueOf(s.charAt(i));
                 if (isCoordinateBlack(new Coordinate(x,y)) || (!ch.equals(table[y][x]) && !EMPTY_GRID_PLACEHOLDER.equals(table[y][x]))) {
                     return false;
                 }
@@ -184,7 +185,7 @@ public class Table2 {
             } else {
                 like += table[y][x];
             }
-            if (alignment.equals(Alignment.VERTICAL)) {
+            if (alignment == Alignment.VERTICAL) {
                 y++;
             } else {
                 x++;
@@ -246,9 +247,9 @@ public class Table2 {
         int x = coordinate.getX();
         int y = coordinate.getY();
         Alignment alignment = coordinate.getAlignment();
-        int incCoord = (alignment.equals(Alignment.HORISONTAL)) ? x : y;
+        int incCoord = (alignment == Alignment.HORISONTAL) ? x : y;
         for (int i = incCoord; i < GRID_SIZE; i++) {
-            if (table[y][x].equals(BLACK_GRID_PLACEHOLDER)) {
+            if (BLACK_GRID_PLACEHOLDER.equals(table[y][x])) {
                 return i - incCoord;
             }
             if (alignment.equals(Alignment.HORISONTAL)) {
