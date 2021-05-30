@@ -24,8 +24,8 @@ public class TriedWordsAndUsedCharsOnStartingCoordinate {
         return List.copyOf(coordinates);
     }
 
-    public void addCoordinate(Coordinate coordinate) {
-        coordinates.add(coordinate);
+    public void addCoordinates(List<Coordinate> coordinates) {
+        this.coordinates = coordinates;
     }
 
     public void deleteCharAtCoordinates(String[][] table) {
