@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Table2Test {
 
@@ -60,16 +60,38 @@ class Table2Test {
     }
 
     @Test
+    void iswordWritableTest() {
+        assertTrue(table2.isWordWritable("HU", new Coordinate(1,0, Alignment.HORISONTAL)));
+        assertFalse(table2.isWordWritable("DANIELLA", new Coordinate(1,0, Alignment.VERTICAL)));
+        assertFalse(table2.isWordWritable("HU", new Coordinate(0,1, Alignment.HORISONTAL)));
+    }
+
+
+    @Test
     void wordWriterTest() {
         table2.fillWordFromCoordinate("YK", new Coordinate(0,1, Alignment.VERTICAL));
         table2.fillWordFromCoordinate("US", new Coordinate(13,0, Alignment.HORISONTAL));
         table2.printTable();
-        assertEquals("Y", table2.readStringAtCoordinate(new Coordinate(0,1, Alignment.VERTICAL)));
-        assertEquals("K", table2.readStringAtCoordinate(new Coordinate(0,2, Alignment.VERTICAL)));
-        assertEquals("U", table2.readStringAtCoordinate(new Coordinate(13,0, Alignment.HORISONTAL)));
-        assertEquals("S", table2.readStringAtCoordinate(new Coordinate(14,0, Alignment.HORISONTAL)));
+        assertEquals("Y", table2.readCharacterAtCoordinate(new Coordinate(0,1, Alignment.VERTICAL)));
+        assertEquals("K", table2.readCharacterAtCoordinate(new Coordinate(0,2, Alignment.VERTICAL)));
+        assertEquals("U", table2.readCharacterAtCoordinate(new Coordinate(13,0, Alignment.HORISONTAL)));
+        assertEquals("S", table2.readCharacterAtCoordinate(new Coordinate(14,0, Alignment.HORISONTAL)));
     }
 
+    @Test
+    void readCharAtCoordTest() {
+        assertEquals(Table2.BLACK_GRID_PLACEHOLDER, table2.readCharacterAtCoordinate(new Coordinate(0,0, Alignment.VERTICAL)));
+        assertEquals(Table2.EMPTY_GRID_PLACEHOLDER, table2.readCharacterAtCoordinate(new Coordinate(0,1, Alignment.VERTICAL)));
 
+    }
+
+    @Test
+    void insertCharacterTest() {
+        table2.insertCharacter("Y", new Coordinate(1, 0, Alignment.HORISONTAL));
+        assertEquals("Y", table2.readCharacterAtCoordinate(new Coordinate(1, 0, Alignment.HORISONTAL)));
+        table2.insertCharacter("Y", new Coordinate(1, 0, Alignment.HORISONTAL));
+        assertThrows(IllegalStateException.class, () -> {table2.insertCharacter("X", new Coordinate(1, 0, Alignment.HORISONTAL));   });
+        assertThrows(IllegalStateException.class, () -> {table2.insertCharacter("X", new Coordinate(0, 0, Alignment.HORISONTAL));   });
+    }
 
 }

@@ -6,7 +6,7 @@ public class Table2 {
 
     public static final int GRID_SIZE = 15;
     public static final String EMPTY_GRID_PLACEHOLDER = "0";
-    private static final String BLACK_GRID_PLACEHOLDER = "#";
+    public static final String BLACK_GRID_PLACEHOLDER = "#";
     private final int MIN_BLACK_SQUARES = GRID_SIZE; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
     private final int MIN_ADDITIONAL_BLACK_SQUARE = GRID_SIZE / 2;
 
@@ -50,39 +50,42 @@ public class Table2 {
 
 
     public void func() {
-        int counter = 0;
-        List<Coordinate> startingCoordinates = findAllStartingCoordinates();
-        ListIterator<Coordinate> lit = startingCoordinates.listIterator();
-        Example example = new Example(startingCoordinates);
+        try {
+            int counter = 0;
+            List<Coordinate> startingCoordinates = findAllStartingCoordinates();
+            ListIterator<Coordinate> lit = startingCoordinates.listIterator();
+            Example example = new Example(startingCoordinates);
 
-        while (lit.hasNext()) {
-            boolean found = false;
-            Coordinate coordinate = lit.next();
-            example.get(coordinate).deleteCharAtCoordinates(table);
-            List<String> words = new WordGameDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
+            while (lit.hasNext()) {
+                boolean found = false;
+                Coordinate coordinate = lit.next();
+                example.deleteCharAtCoordinates(table, coordinate);
+                List<String> words = new WordGameDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
 
-            ++counter;
-            for (String item : words) {
-                if (example.get(coordinate).getWords().contains(item)) {
-                    continue;
+                ++counter;
+                for (String item : words) {
+                    if (example.getWords(coordinate).contains(item)) {
+                        continue;
+                    }
+                    if (isWordWritable(item, coordinate)) {
+                        List<Coordinate> charCoords = fillWordFromCoordinate(item, coordinate);
+                        example.addCoordinates(charCoords, coordinate);
+                        example.addWord(item, coordinate);
+                        found = true;
+                        break;
+                    }
                 }
-                if (isWordWritable(item, coordinate)) {
-                    List<Coordinate> charCoords = fillWordFromCoordinate(item, coordinate);
-                    example.get(coordinate).addCoordinates(charCoords);
-                    example.get(coordinate).addWord(item);
-                    found = true;
-                    break;
+                if (found == false) {
+                    example.clearWords(coordinate);
+                    example.deleteCharAtCoordinates(table, coordinate);
+                    lit.previous();
+                    lit.previous();
                 }
             }
-            if (found == false) {
-                example.get(coordinate).clearWords();
-                example.get(coordinate).deleteCharAtCoordinates(table);
-                lit.previous();
-                lit.previous();
-            }
+            System.out.println(counter);
+        } catch (NoSuchElementException nsee) {
+            throw new IllegalStateException("Az adatbázisban található szavakból nem lehet keresztrejtvényt összeállítani.", nsee);
         }
-        System.out.println(counter);
-        //throw new IllegalStateException("Vége");
     }
 
 
@@ -123,14 +126,14 @@ public class Table2 {
     }
 
     private boolean isCoordinateBlack(int x, int y) {
-        if (BLACK_GRID_PLACEHOLDER.equals(readStringAtCoordinate(new Coordinate(x, y)))) { //|| !EMPTY_GRID_PLACEHOLDER.equals(table[x][y])
+        if (BLACK_GRID_PLACEHOLDER.equals(readCharacterAtCoordinate(new Coordinate(x, y)))) { //|| !EMPTY_GRID_PLACEHOLDER.equals(table[x][y])
             return true;
         }
         return false;
     }
 
-    private boolean isEmptyCoordinate(int x, int y) {
-        if (EMPTY_GRID_PLACEHOLDER.equals(readStringAtCoordinate(new Coordinate(x, y)))) {
+    private boolean isEmptyCoordinate(Coordinate coordinate) {
+        if (EMPTY_GRID_PLACEHOLDER.equals(readCharacterAtCoordinate(coordinate))) {
             return true;
         }
         return false;
@@ -139,7 +142,7 @@ public class Table2 {
     public void insertCharacter(String s, Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
-        if (isCoordinateBlack(coord) || (!s.equals(readStringAtCoordinate(new Coordinate(x, y))) && !isEmptyCoordinate(x, y))) {
+        if (isCoordinateBlack(coord) || (!s.equals(readCharacterAtCoordinate(coord)) && !isEmptyCoordinate(coord))) {
            throw new IllegalStateException("Írás hiba.");
         }
         table[y][x] = s;
@@ -147,56 +150,38 @@ public class Table2 {
 
     public List<Coordinate> fillWordFromCoordinate(String s, Coordinate coord) {
         List<Coordinate> coordinates = new ArrayList<>();
-        int x = coord.getX();
-        int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
             String ch = String.valueOf(s.charAt(i));
-                if (isEmptyCoordinate(x, y)) {
-                    coordinates.add(new Coordinate(x,y));
+                if (isEmptyCoordinate(coord)) {
+                    coordinates.add(coord);
                 }
-            insertCharacter(ch, new Coordinate(x, y));
-            if (coord.getAlignment() == Alignment.VERTICAL) {
-                y++;
-            } else {
-                x++;
-            }
+            insertCharacter(ch, coord);
+            coord = incrementCoordinate(coord);
         }
         return coordinates;
     }
 
     public boolean isWordWritable(String s, Coordinate coord) {
-        int x = coord.getX();
-        int y = coord.getY();
         for (int i = 0; i < s.length(); i++) {
             String ch = String.valueOf(s.charAt(i));
-                if (isCoordinateBlack(new Coordinate(x,y)) || (!ch.equals(readStringAtCoordinate(new Coordinate(x, y))) && !isEmptyCoordinate(x, y))) {
+                if (isCoordinateBlack(coord) || (!ch.equals(readCharacterAtCoordinate(coord)) && !isEmptyCoordinate(coord))) {
                     return false;
                 }
-            if (coord.getAlignment() == Alignment.VERTICAL) {
-                y++;
-            } else {
-                x++;
-            }
+           coord = incrementCoordinate(coord);
         }
         return true;
     }
 
     public String likePatternMaker(Coordinate coordinate) {
-        Alignment alignment = coordinate.getAlignment();
-        int x = coordinate.getX();
-        int y = coordinate.getY();
+        int wordlength = wordLengthFromStartingCoordinate(coordinate);
         String like = "";
-        for (int i = 0; i < wordLengthFromStartingCoordinate(coordinate); i++) {
-            if (isEmptyCoordinate(x, y)) {
+        for (int i = 0; i < wordlength; i++) {
+            if (isEmptyCoordinate(coordinate)) {
                 like += "_";
             } else {
-                like += readStringAtCoordinate(new Coordinate(x, y));
+                like += readCharacterAtCoordinate(coordinate);
             }
-            if (alignment == Alignment.VERTICAL) {
-                y++;
-            } else {
-                x++;
-            }
+            coordinate = incrementCoordinate(coordinate);
         }
         return like;
     }
@@ -244,21 +229,23 @@ public class Table2 {
     }
 
     public int wordLengthFromStartingCoordinate(Coordinate coordinate) {
-        int x = coordinate.getX();
-        int y = coordinate.getY();
         Alignment alignment = coordinate.getAlignment();
-        int incCoord = (alignment == Alignment.HORISONTAL) ? x : y;
+        int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
         for (int i = incCoord; i < GRID_SIZE; i++) {
-            if (isCoordinateBlack(x, y)) {
+            if (isCoordinateBlack(coordinate.getX(), coordinate.getY())) {
                 return i - incCoord;
             }
-            if (alignment.equals(Alignment.HORISONTAL)) {
-                ++x;
-            } else {
-                ++y;
-            }
+            coordinate = incrementCoordinate(coordinate);
         }
         return GRID_SIZE - incCoord;
+    }
+
+    private Coordinate incrementCoordinate(Coordinate coordinate) {
+        Alignment alignment = coordinate.getAlignment();
+        if (alignment == Alignment.HORISONTAL) {
+            return new Coordinate(coordinate.getX() + 1, coordinate.getY(), alignment);
+        }
+            return new Coordinate(coordinate.getX(), coordinate.getY() + 1, alignment);
     }
 
     public List<Coordinate> findAllStartingCoordinates() {
@@ -306,7 +293,7 @@ public class Table2 {
         return coordinates;
     }
 
-    public String readStringAtCoordinate(Coordinate coordinate) {
+    public String readCharacterAtCoordinate(Coordinate coordinate) {
         return table[coordinate.getY()][coordinate.getX()];
     }
 
