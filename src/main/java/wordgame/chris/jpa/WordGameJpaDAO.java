@@ -11,24 +11,25 @@ import java.util.List;
 
 public class WordGameJpaDAO {
 
-    private EntityManager entityManager;
+    private EntityManagerFactory entityManagerFactory;
 
-    public WordGameJpaDAO(EntityManager entityManager) {
-       this.entityManager = entityManager;
+    public WordGameJpaDAO(EntityManagerFactory entityManagerFactory) {
+       this.entityManagerFactory = entityManagerFactory;
     }
 
     public WordGameJpaDAO() {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("wordgame-jpa");
-        entityManager = factory.createEntityManager();
     }
 
     //Beszúr egy vagy több szót az adatbázisba. String split()-kor hasznos a varargs
     public void addWords(String... words) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
             for (String word : words) {
                 entityManager.persist(new WordWithLength(word, word.length()));
             }
             entityManager.getTransaction().commit();
+            entityManager.close();
     }
 
     public void addWordsSeperatedBy(String file, String separator) {
@@ -45,11 +46,13 @@ public class WordGameJpaDAO {
     }
 
     public List<String> queryWordsWithLenght(int length) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         return entityManager.createQuery("SELECT w.word FROM WordWithLength w WHERE w.length = :length", String.class)
                 .setParameter("length" ,length).getResultList();
     }
 
     public List<String> queryWordsWithLenghtAndLike(int length, String like) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
         String emptyLikePatternFromWordLength = emptyLikePatternMakerFromLength(length);
         if (like.equals(emptyLikePatternFromWordLength)) {
             return queryWordsWithLenght(length);
@@ -67,7 +70,7 @@ public class WordGameJpaDAO {
         return like;
     }
 
-    public EntityManager getEntityManager() {
-        return entityManager;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
     }
 }
