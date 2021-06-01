@@ -1,8 +1,9 @@
-package wordgame.chris;
+package wordgame.chris.jdbc;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import wordgame.chris.WordGameJdbcDAO;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WordGameJdbcDAOTest {
 
-    private WordGameJdbcDAO wordGameJdbcDAO;
+    private wordgame.chris.WordGameJdbcDAO wordGameJdbcDAO;
 
     @BeforeEach
     void init() {
