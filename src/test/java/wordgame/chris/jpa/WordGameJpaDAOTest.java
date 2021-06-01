@@ -1,14 +1,12 @@
-package wordgame.chris;
+package wordgame.chris.jpa;
 
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mariadb.jdbc.MariaDbDataSource;
+import wordgame.chris.jpa.MDataSource;
+import wordgame.chris.jpa.WordGameJpaDAO;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,22 +14,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class WordGameJpaDAOTest {
 
-    private EntityManager entityManager;
     private WordGameJpaDAO wordGameJpaDAO;
 
     @BeforeEach
     void init() {
-        entityManager = getEntityManager();
-        wordGameJpaDAO = new WordGameJpaDAO(entityManager);
+        wordGameJpaDAO = new WordGameJpaDAO();
         MariaDbDataSource mDs = MDataSource.getMariaDbDataSource();
         Flyway flyway = Flyway.configure().dataSource(mDs).load();
         flyway.clean();
         flyway.migrate();
-    }
-
-    private EntityManager getEntityManager() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("wordgame-jpa");
-        return factory.createEntityManager();
     }
 
     @Test
