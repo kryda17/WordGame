@@ -50,7 +50,7 @@ public class Table2 {
 
 
     public void func() {
-        try {
+       // try {
             int counter = 0;
             List<Coordinate> startingCoordinates = findAllStartingCoordinates();
             ListIterator<Coordinate> lit = startingCoordinates.listIterator();
@@ -60,7 +60,7 @@ public class Table2 {
                 boolean found = false;
                 Coordinate coordinate = lit.next();
                 example.deleteCharAtCoordinates(table, coordinate);
-                List<String> words = new WordGameDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
+                List<String> words = new WordGameJdbcDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
 
                 ++counter;
                 for (String item : words) {
@@ -83,9 +83,11 @@ public class Table2 {
                 }
             }
             System.out.println(counter);
-        } catch (NoSuchElementException nsee) {
+       /* } catch (NoSuchElementException nsee) {
             throw new IllegalStateException("Az adatbázisban található szavakból nem lehet keresztrejtvényt összeállítani.", nsee);
         }
+
+        */
     }
 
 

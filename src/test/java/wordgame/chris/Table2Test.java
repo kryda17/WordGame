@@ -3,7 +3,9 @@ package wordgame.chris;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mariadb.jdbc.MariaDbDataSource;
 
+import java.sql.SQLException;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,20 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 class Table2Test {
 
     private Table2 table2;
-    private WordGameDAO wordGameDAO;
+    //private WordGameJdbcDAO wordGameJdbcDAO;
+    private WordGameJpaDAO wordGameJpaDAO;
 
 
     @BeforeEach
     void init() {
+        wordGameJpaDAO = new WordGameJpaDAO();
+        //wordGameJdbcDAO = new WordGameJdbcDAO();
+        MariaDbDataSource mDs = MDataSource.getMariaDbDataSource();
         table2 = new Table2(new Random(1));
-        wordGameDAO = new WordGameDAO();
-        Flyway flyway = Flyway.configure().dataSource(wordGameDAO.getDs()).load();
+        Flyway flyway = Flyway.configure().dataSource(mDs).load();
         flyway.clean();
         flyway.migrate();
-        wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak.txt", "\n");
-        wordGameDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak2.txt", " ");
-
-
+        wordGameJpaDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak.txt", "\n");
+        wordGameJpaDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak2.txt", " ");
     }
 
     @Test

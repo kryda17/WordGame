@@ -13,16 +13,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WordGameDAO {
+public class WordGameJdbcDAO {
 
     private MariaDbDataSource ds;
 
-    public WordGameDAO() {
+    public WordGameJdbcDAO() {
         try {
             MariaDbDataSource dataSource = new MariaDbDataSource();
             dataSource.setUrl("jdbc:mariadb://localhost:3306/employees?useUnicode=true");
             dataSource.setUser("root");
-            dataSource.setPassword("");
+            dataSource.setPassword("Gkc5167943m");
             ds = dataSource;
         } catch (SQLException sqle) {
             throw new IllegalStateException("Can't connect to the database.", sqle);
