@@ -1,4 +1,4 @@
-package wordgame.chris;
+package wordgame.chris.jpa;
 
 import org.mariadb.jdbc.MariaDbDataSource;
 

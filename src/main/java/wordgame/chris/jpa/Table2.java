@@ -1,4 +1,6 @@
-package wordgame.chris;
+package wordgame.chris.jpa;
+
+import wordgame.chris.WordGameJdbcDAO;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package wordgame.chris;
+package wordgame.chris.jdbc;
 
 public enum Alignment {
 

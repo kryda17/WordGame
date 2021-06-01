@@ -1,4 +1,4 @@
-package wordgame.chris;
+package wordgame.chris.jdbc;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package wordgame.chris;
+package wordgame.chris.jdbc;
 
 import java.util.HashMap;
 import java.util.List;
