@@ -6,23 +6,23 @@ import java.util.Map;
 
 public class Example {
 
-   private Map<Coordinate, TriedWordsAndUsedCharsOnStartingCoordinate> search = new HashMap<>();
+   private Map<WordStartingCoordinate, TriedWordsAndUsedCharsOnStartingCoordinate> search = new HashMap<>();
 
-    public Example(List<Coordinate> coordinates) {
-        for (Coordinate coordinate : coordinates) {
+    public Example(List<WordStartingCoordinate> coordinates) {
+        for (WordStartingCoordinate coordinate : coordinates) {
             search.put(coordinate, new TriedWordsAndUsedCharsOnStartingCoordinate());
         }
     }
 
-    public void addWord(String word, Coordinate coordinate) {
+    public void addWord(String word, WordStartingCoordinate coordinate) {
         search.get(coordinate).addWord(word);
     }
 
-    public void clearWords(Coordinate coordinate) {
+    public void clearWords(WordStartingCoordinate coordinate) {
         search.get(coordinate).clearWords();
     }
 
-    public List<String> getWords(Coordinate coordinate) {
+    public List<String> getWords(WordStartingCoordinate coordinate) {
         return List.copyOf(search.get(coordinate).getWords());
     }
 
@@ -40,7 +40,7 @@ public class Example {
         }
     }
 
-    public TriedWordsAndUsedCharsOnStartingCoordinate get(Coordinate coordinate) {
+    public TriedWordsAndUsedCharsOnStartingCoordinate get(WordStartingCoordinate coordinate) {
         return search.get(coordinate);
     }
 }

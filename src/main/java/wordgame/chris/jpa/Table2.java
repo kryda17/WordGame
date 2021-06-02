@@ -1,7 +1,5 @@
 package wordgame.chris.jpa;
 
-import wordgame.chris.WordGameJdbcDAO;
-
 import java.util.*;
 
 public class Table2 {
@@ -15,6 +13,8 @@ public class Table2 {
     private List<Coordinate> blackCoordinates = new ArrayList<>();
     private String[][] table = new String[GRID_SIZE][GRID_SIZE];
     private Random rnd = new Random();
+    private WordGameJpaDAO wordGameJpaDAO = new WordGameJpaDAO();
+    private WordGameGUI wordGameGUI = new WordGameGUI();
 
     public Table2() {
         initTable();
@@ -51,45 +51,45 @@ public class Table2 {
     }
 
 
-    public void func() {
-       // try {
-            int counter = 0;
-            List<Coordinate> startingCoordinates = findAllStartingCoordinates();
-            ListIterator<Coordinate> lit = startingCoordinates.listIterator();
-            Example example = new Example(startingCoordinates);
+    public String[][] func() {
+        // try {
+        int counter = 0;
+        List<WordStartingCoordinate> startingCoordinates = findAllStartingCoordinates();
+        ListIterator<WordStartingCoordinate> lit = startingCoordinates.listIterator();
+        Example example = new Example(startingCoordinates);
 
-            while (lit.hasNext()) {
-                boolean found = false;
-                Coordinate coordinate = lit.next();
-                example.deleteCharAtCoordinates(table, coordinate);
-                List<String> words = new WordGameJdbcDAO().queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
+        while (lit.hasNext()) {
+            boolean found = false;
+            WordStartingCoordinate coordinate = lit.next();
+            example.deleteCharAtCoordinates(table, coordinate);
+            List<String> words = wordGameJpaDAO.queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
 
-                ++counter;
-                for (String item : words) {
-                    if (example.getWords(coordinate).contains(item)) {
-                        continue;
-                    }
-                    if (isWordWritable(item, coordinate)) {
-                        List<Coordinate> charCoords = fillWordFromCoordinate(item, coordinate);
-                        example.addCoordinates(charCoords, coordinate);
-                        example.addWord(item, coordinate);
-                        found = true;
-                        break;
-                    }
+            ++counter;
+            for (String item : words) {
+                if (example.getWords(coordinate).contains(item)) {
+                    continue;
                 }
-                if (found == false) {
-                    example.clearWords(coordinate);
-                    example.deleteCharAtCoordinates(table, coordinate);
-                    lit.previous();
-                    lit.previous();
+                if (isWordWritable(item, coordinate)) {
+                    List<Coordinate> charCoords = fillWordFromCoordinate(item, coordinate);
+                    example.addCoordinates(charCoords, coordinate);
+                    example.addWord(item, coordinate);
+                    found = true;
+                    break;
                 }
             }
-            System.out.println(counter);
+            if (found == false) {
+                example.clearWords(coordinate);
+                example.deleteCharAtCoordinates(table, coordinate);
+                lit.previous();
+                lit.previous();
+            }
+        }
+        System.out.println(counter);
        /* } catch (NoSuchElementException nsee) {
             throw new IllegalStateException("Az adatbázisban található szavakból nem lehet keresztrejtvényt összeállítani.", nsee);
         }
-
         */
+        return getTable();
     }
 
 
@@ -97,19 +97,33 @@ public class Table2 {
         int counter = 0; //ideiglenes
         int rnd_num_of_black_squares = rnd.nextInt(MIN_BLACK_SQUARES) + MIN_ADDITIONAL_BLACK_SQUARE;
         int allRequiredBlackSquare = MIN_BLACK_SQUARES + rnd_num_of_black_squares;
-                while (blackCoordinates.size() < allRequiredBlackSquare) {
-                    ++counter; //ideiglenes
-                    int x = rnd.nextInt(GRID_SIZE);
-                    int y = rnd.nextInt(GRID_SIZE);
-                    Coordinate coordinate = new Coordinate(x,y);
-                    if (isGeneratedCoordDifferenceMinTwo(coordinate)) {
-                        blackCoordinates.add(coordinate);
-                    }
-                }
+        while (blackCoordinates.size() < allRequiredBlackSquare) {
+            ++counter; //ideiglenes
+            int x = rnd.nextInt(GRID_SIZE);
+            int y = rnd.nextInt(GRID_SIZE);
+            Coordinate coordinate = new Coordinate(x,y);
+            if (isGeneratedCoordDifferenceMinTwo(coordinate)) {
+                blackCoordinates.add(coordinate);
+            }
+        }
         System.out.println(rnd_num_of_black_squares + " random fekete kocka generálása pluszba még: " +       //ideiglenes
                 + counter + " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());    //ideiglenes
         System.out.println();  //ideiglenes
+    }
+
+    public String getWordFromStartingCoordinate(WordStartingCoordinate coordinate) {
+        String word = "";
+        Alignment alignment = coordinate.getAlignment();
+        int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
+        for (int i = incCoord; i < GRID_SIZE; i++) {
+            if (isCoordinateBlack(coordinate.getX(), coordinate.getY())) {
+                return word;
+            }
+            word += readCharacterAtCoordinate(coordinate);
+            coordinate = incrementCoordinate(coordinate);
         }
+        return word;
+    }
 
     private void insertBlackSquare(Coordinate coord) {
         int x = coord.getX();
@@ -147,36 +161,36 @@ public class Table2 {
         int x = coord.getX();
         int y = coord.getY();
         if (isCoordinateBlack(coord) || (!s.equals(readCharacterAtCoordinate(coord)) && !isEmptyCoordinate(coord))) {
-           throw new IllegalStateException("Írás hiba.");
+            throw new IllegalStateException("Írás hiba.");
         }
         table[y][x] = s;
     }
 
-    public List<Coordinate> fillWordFromCoordinate(String s, Coordinate coord) {
+    public List<Coordinate> fillWordFromCoordinate(String s, WordStartingCoordinate coord) {
         List<Coordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < s.length(); i++) {
             String ch = String.valueOf(s.charAt(i));
-                if (isEmptyCoordinate(coord)) {
-                    coordinates.add(coord);
-                }
+            if (isEmptyCoordinate(coord)) {
+                coordinates.add(coord);
+            }
             insertCharacter(ch, coord);
             coord = incrementCoordinate(coord);
         }
         return coordinates;
     }
 
-    public boolean isWordWritable(String s, Coordinate coord) {
+    public boolean isWordWritable(String s, WordStartingCoordinate coord) {
         for (int i = 0; i < s.length(); i++) {
             String ch = String.valueOf(s.charAt(i));
-                if (isCoordinateBlack(coord) || (!ch.equals(readCharacterAtCoordinate(coord)) && !isEmptyCoordinate(coord))) {
-                    return false;
-                }
-           coord = incrementCoordinate(coord);
+            if (isCoordinateBlack(coord) || (!ch.equals(readCharacterAtCoordinate(coord)) && !isEmptyCoordinate(coord))) {
+                return false;
+            }
+            coord = incrementCoordinate(coord);
         }
         return true;
     }
 
-    public String likePatternMaker(Coordinate coordinate) {
+    public String likePatternMaker(WordStartingCoordinate coordinate) {
         int wordlength = wordLengthFromStartingCoordinate(coordinate);
         String like = "";
         for (int i = 0; i < wordlength; i++) {
@@ -205,12 +219,12 @@ public class Table2 {
     }
 
     private boolean isRowColAlreadyContainsBlack(Coordinate coord) {
-           for (Coordinate secCoord : blackCoordinates) {
-             if ((coord.getX() == secCoord.getX()) || (coord.getY() == secCoord.getY())) {
-                 return true;
-             }
-          }
-          return false;
+        for (Coordinate secCoord : blackCoordinates) {
+            if ((coord.getX() == secCoord.getX()) || (coord.getY() == secCoord.getY())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void generateRndBlacks() {
@@ -232,7 +246,7 @@ public class Table2 {
                 " iteráció ---  Koordinátákat tartalmazó lista mérete: " + blackCoordinates.size());     //ideiglenes
     }
 
-    public int wordLengthFromStartingCoordinate(Coordinate coordinate) {
+    public int wordLengthFromStartingCoordinate(WordStartingCoordinate coordinate) {
         Alignment alignment = coordinate.getAlignment();
         int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
         for (int i = incCoord; i < GRID_SIZE; i++) {
@@ -244,52 +258,52 @@ public class Table2 {
         return GRID_SIZE - incCoord;
     }
 
-    private Coordinate incrementCoordinate(Coordinate coordinate) {
+    private WordStartingCoordinate incrementCoordinate(WordStartingCoordinate coordinate) {
         Alignment alignment = coordinate.getAlignment();
         if (alignment == Alignment.HORISONTAL) {
-            return new Coordinate(coordinate.getX() + 1, coordinate.getY(), alignment);
+            return new WordStartingCoordinate(coordinate.getX() + 1, coordinate.getY(), alignment);
         }
-            return new Coordinate(coordinate.getX(), coordinate.getY() + 1, alignment);
+        return new WordStartingCoordinate(coordinate.getX(), coordinate.getY() + 1, alignment);
     }
 
-    public List<Coordinate> findAllStartingCoordinates() {
-        List<Coordinate> coordinates = horisontalStartingCoorinates();
+    public List<WordStartingCoordinate> findAllStartingCoordinates() {
+        List<WordStartingCoordinate> coordinates = horisontalStartingCoorinates();
         coordinates.addAll(verticalStartingCoordinates());
         coordinates.sort(Comparator.comparingInt(Coordinate::getY).thenComparing(Coordinate::getX));
         return coordinates;
     }
 
-    private List<Coordinate> horisontalStartingCoorinates() {
+    private List<WordStartingCoordinate> horisontalStartingCoorinates() {
         Alignment alignment = Alignment.HORISONTAL;
-        List<Coordinate> coordinates = new ArrayList<>();
+        List<WordStartingCoordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             //Ha az új sor nem fekete kocka,akkor új szó kezdődik
             if (!isCoordinateBlack(0, i)) {
-                coordinates.add(new Coordinate(0, i, alignment));
+                coordinates.add(new WordStartingCoordinate(0, i, alignment));
             }
             //Ha az előző sorban volt betű
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (isCoordinateBlack(j, i) && j + 1 < GRID_SIZE) {
-                    coordinates.add(new Coordinate(j + 1, i, alignment));
+                    coordinates.add(new WordStartingCoordinate(j + 1, i, alignment));
                 }
             }
         }
         return coordinates;
     }
 
-    private List<Coordinate> verticalStartingCoordinates() {
+    private List<WordStartingCoordinate> verticalStartingCoordinates() {
         Alignment alignment = Alignment.VERTICAL;
-        List<Coordinate> coordinates = new ArrayList<>();
+        List<WordStartingCoordinate> coordinates = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             //Ha az új sor nem fekete kocka,akkor új szó kezdődik
             if (!isCoordinateBlack(i, 0)) {
-                coordinates.add(new Coordinate(i, 0, alignment));
+                coordinates.add(new WordStartingCoordinate(i, 0, alignment));
             }
             for (int j = 0; j < GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (isCoordinateBlack(i, j) && j + 1 < GRID_SIZE) {
-                    coordinates.add(new Coordinate(i, j + 1, alignment));
+                    coordinates.add(new WordStartingCoordinate(i, j + 1, alignment));
                 }
 
             }

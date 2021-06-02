@@ -18,7 +18,7 @@ public class WordGameJpaDAO {
     }
 
     public WordGameJpaDAO() {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("wordgame-jpa");
+        entityManagerFactory = Persistence.createEntityManagerFactory("wordgame-jpa");
     }
 
     //Beszúr egy vagy több szót az adatbázisba. String split()-kor hasznos a varargs
@@ -47,8 +47,10 @@ public class WordGameJpaDAO {
 
     public List<String> queryWordsWithLenght(int length) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        return entityManager.createQuery("SELECT w.word FROM WordWithLength w WHERE w.length = :length", String.class)
+        List<String> words = entityManager.createQuery("SELECT w.word FROM WordWithLength w WHERE w.length = :length", String.class)
                 .setParameter("length" ,length).getResultList();
+        entityManager.close();
+        return words;
     }
 
     public List<String> queryWordsWithLenghtAndLike(int length, String like) {
@@ -57,9 +59,11 @@ public class WordGameJpaDAO {
         if (like.equals(emptyLikePatternFromWordLength)) {
             return queryWordsWithLenght(length);
         }
-        return entityManager.createQuery("SELECT w.word FROM WordWithLength w WHERE w.length  = :length AND w.word LIKE :like", String.class)
+        List<String> words = entityManager.createQuery("SELECT w.word FROM WordWithLength w WHERE w.length  = :length AND w.word LIKE :like", String.class)
                 .setParameter("length" ,length)
                 .setParameter("like", like).getResultList();
+        entityManager.close();
+        return words;
     }
 
     private String emptyLikePatternMakerFromLength(int wordLength) {

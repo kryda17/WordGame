@@ -7,6 +7,8 @@ import org.mariadb.jdbc.MariaDbDataSource;
 import wordgame.chris.jpa.MDataSource;
 import wordgame.chris.jpa.WordGameJpaDAO;
 
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +20,8 @@ class WordGameJpaDAOTest {
 
     @BeforeEach
     void init() {
-        wordGameJpaDAO = new WordGameJpaDAO();
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("wordgame-jpa");
+        wordGameJpaDAO = new WordGameJpaDAO(entityManagerFactory);
         MariaDbDataSource mDs = MDataSource.getMariaDbDataSource();
         Flyway flyway = Flyway.configure().dataSource(mDs).load();
         flyway.clean();
