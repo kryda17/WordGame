@@ -37,8 +37,9 @@ class WordGameDAOTest {
 
     @Test
     void testReadFromFile() {
-        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources//szövegek/testfile.txt");
+        wordGameDAO.addWordsSeperatedBySpaceFromFile("src/main/resources//szövegek/testfile.txt", " ");
         assertEquals(Arrays.asList("Test"), wordGameDAO.queryWordsWithLenght(4));
     }
+
 
 }

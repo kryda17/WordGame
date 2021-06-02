@@ -34,9 +34,9 @@ public class Example {
         search.get(coordinate).addCoordinates(coordinates);
     }
 
-    public void deleteCharAtCoordinates(String[][] table, Coordinate coordinate) {
+    public void deleteCharAtCoordinates(Table2 table2, Coordinate coordinate) {
         for (Coordinate item : search.get(coordinate).getCoordinates()) {
-            table[item.getY()][item.getX()] = Table2.EMPTY_GRID_PLACEHOLDER;
+            table2.deleteCoordinate(item);
         }
     }
 

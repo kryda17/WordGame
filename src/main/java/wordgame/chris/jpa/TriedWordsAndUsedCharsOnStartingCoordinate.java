@@ -28,9 +28,9 @@ public class TriedWordsAndUsedCharsOnStartingCoordinate {
         this.coordinates = coordinates;
     }
 
-    public void deleteCharAtCoordinates(String[][] table) {
+    public void deleteCharAtCoordinates(Table2 table) {
         for (Coordinate item : coordinates) {
-            table[item.getY()][item.getX()] = Table2.EMPTY_GRID_PLACEHOLDER;
+            table.deleteCoordinate(item);
         }
     }
 
