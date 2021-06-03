@@ -15,43 +15,34 @@ public class FillTable {
     }
 
     public Table2 func(Table2 table) {
-        // try {
-        int counter = 0;
         List<WordStartingCoordinate> startingCoordinates = findAllStartingCoordinates();
         ListIterator<WordStartingCoordinate> lit = startingCoordinates.listIterator();
-        Example example = new Example(startingCoordinates);
 
         while (lit.hasNext()) {
             boolean found = false;
-            WordStartingCoordinate coordinate = lit.next();
-            example.deleteCharAtCoordinates(table, coordinate);
-            List<String> words = wordGameJpaDAO.queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(coordinate), likePatternMaker(coordinate));
+            WordStartingCoordinate wordStartingCoordinate = lit.next();
+            wordStartingCoordinate.deleteCharAtCoordinates(table);
+            List<String> words = wordGameJpaDAO.queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(wordStartingCoordinate), likePatternMaker(wordStartingCoordinate));
 
-            ++counter;
             for (String item : words) {
-                if (example.getWords(coordinate).contains(item)) {
+                if (wordStartingCoordinate.getWords().contains(item)) {
                     continue;
                 }
-                if (isWordWritable(item, coordinate)) {
-                    List<Coordinate> charCoords = fillWordFromCoordinate(item, coordinate);
-                    example.addCoordinates(charCoords, coordinate);
-                    example.addWord(item, coordinate);
+                if (isWordWritable(item, wordStartingCoordinate)) {
+                    List<Coordinate> charCoords = fillWordFromCoordinate(item, wordStartingCoordinate);
+                    wordStartingCoordinate.addCoordinates(charCoords);
+                    wordStartingCoordinate.addWord(item);
                     found = true;
                     break;
                 }
             }
             if (found == false) {
-                example.clearWords(coordinate);
-                example.deleteCharAtCoordinates(table, coordinate);
+                wordStartingCoordinate.clearWords();
+                wordStartingCoordinate.deleteCharAtCoordinates(table);
                 lit.previous();
                 lit.previous();
             }
         }
-        System.out.println(counter);
-       /* } catch (NoSuchElementException nsee) {
-            throw new IllegalStateException("Az adatbázisban található szavakból nem lehet keresztrejtvényt összeállítani.", nsee);
-        }
-        */
         return table;
     }
 
@@ -69,7 +60,7 @@ public class FillTable {
         return word;
     }
 
-    private boolean isEmptyCoordinate(Coordinate coordinate) {
+    public boolean isEmptyCoordinate(Coordinate coordinate) {
         if (table.EMPTY_GRID_PLACEHOLDER.equals(readCharacterAtCoordinate(coordinate))) {
             return true;
         }
@@ -199,6 +190,10 @@ public class FillTable {
             }
             System.out.println();
         }
+    }
+
+    public void deleteCoordinate(int x,int y) {
+        table.deleteCoordinate(x,y);
     }
 
     public Table2 getTable() {

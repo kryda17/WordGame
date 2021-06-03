@@ -104,4 +104,13 @@ class Table2Test {
         assertEquals("DANIELLA", fillTable.getWordFromStartingCoordinate(new WordStartingCoordinate(0,1, Alignment.VERTICAL)));
     }
 
+    @Test
+    void diffTwoTest() {
+        assertTrue(fillTable.getTable().isGeneratedCoordDifferenceMinTwoV3(new Coordinate(0,3)));
+        assertFalse(fillTable.getTable().isGeneratedCoordDifferenceMinTwoV3(new Coordinate(1,0)));
+        assertTrue(fillTable.getTable().isGeneratedCoordDifferenceMinTwoV3(new Coordinate(4,2)));
+        assertFalse(fillTable.getTable().isGeneratedCoordDifferenceMinTwoV3(new Coordinate(14,14)));
+        assertTrue(fillTable.getTable().isGeneratedCoordDifferenceMinTwoV3(new Coordinate(10,14)));
+    }
+
 }

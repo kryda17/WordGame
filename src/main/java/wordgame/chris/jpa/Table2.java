@@ -32,7 +32,7 @@ public class Table2 {
     private void fillTalbeWithEmptys() {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                deleteCoordinate(i, j);
+                table[i][j] = EMPTY_GRID_PLACEHOLDER;
             }
         }
     }
