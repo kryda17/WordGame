@@ -17,9 +17,7 @@ public class WordStartingCoordinate extends Coordinate {
         this.alignment = alignment;
     }
 
-
-
-        public int getX() {
+    public int getX() {
             return x;
         }
 
@@ -75,9 +73,9 @@ public class WordStartingCoordinate extends Coordinate {
         public String toString() {
             String s = "";
             if (alignment == Alignment.HORISONTAL) {
-                s += "H";
+                s += "[H]";
             }
-            else s += "V";
+            else s += "[V]";
             return s += super.toString();
         }
     }

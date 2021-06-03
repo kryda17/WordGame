@@ -31,7 +31,7 @@ class Table2Test {
 
     @Test
     void testFunc() {
-        fillTable.func(fillTable.getTable());
+        fillTable.fillWords(fillTable.getTable());
         fillTable.printTable();
     }
 

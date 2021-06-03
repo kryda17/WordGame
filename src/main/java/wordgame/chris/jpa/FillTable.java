@@ -14,7 +14,7 @@ public class FillTable {
         this.table = table;
     }
 
-    public Table2 func(Table2 table) {
+    public Table2 fillWords(Table2 table) {
         List<WordStartingCoordinate> startingCoordinates = findAllStartingCoordinates();
         ListIterator<WordStartingCoordinate> lit = startingCoordinates.listIterator();
 
@@ -22,7 +22,8 @@ public class FillTable {
             boolean found = false;
             WordStartingCoordinate wordStartingCoordinate = lit.next();
             wordStartingCoordinate.deleteCharAtCoordinates(table);
-            List<String> words = wordGameJpaDAO.queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(wordStartingCoordinate), likePatternMaker(wordStartingCoordinate));
+            List<String> words = wordGameJpaDAO
+                    .queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(wordStartingCoordinate), likePatternMaker(wordStartingCoordinate));
 
             for (String item : words) {
                 if (wordStartingCoordinate.getWords().contains(item)) {
