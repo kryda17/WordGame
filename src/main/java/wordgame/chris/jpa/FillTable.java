@@ -52,7 +52,7 @@ public class FillTable {
         Alignment alignment = coordinate.getAlignment();
         int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
         for (int i = incCoord; i < table.GRID_SIZE; i++) {
-            if (table.isCoordinateBlack(coordinate.getX(), coordinate.getY())) {
+            if (table.isCoordinateBlack(coordinate)) {
                 return word;
             }
             word += readCharacterAtCoordinate(coordinate);
@@ -102,9 +102,9 @@ public class FillTable {
     }
 
     public String likePatternMaker(WordStartingCoordinate coordinate) {
-        int wordlength = wordLengthFromStartingCoordinate(coordinate);
+        int wordLength = wordLengthFromStartingCoordinate(coordinate);
         String like = "";
-        for (int i = 0; i < wordlength; i++) {
+        for (int i = 0; i < wordLength; i++) {
             if (isEmptyCoordinate(coordinate)) {
                 like += "_";
             } else {
@@ -150,7 +150,6 @@ public class FillTable {
             if (!table.isCoordinateBlack(0, i)) {
                 coordinates.add(new WordStartingCoordinate(0, i, alignment));
             }
-            //Ha az előző sorban volt betű
             for (int j = 0; j < table.GRID_SIZE; j++) {
                 //Ha fekete kockával kezdődik az új sor,akkor a szó utána kezdődik
                 if (table.isCoordinateBlack(j, i) && j + 1 < table.GRID_SIZE) {

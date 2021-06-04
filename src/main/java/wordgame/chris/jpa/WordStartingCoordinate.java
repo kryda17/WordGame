@@ -53,6 +53,7 @@ public class WordStartingCoordinate extends Coordinate {
         for (Coordinate item : coordinates) {
             table.deleteCoordinate(item.getX(), item.getY());
         }
+        coordinates = new ArrayList<>();
     }
 
     @Override

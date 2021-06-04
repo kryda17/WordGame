@@ -8,17 +8,24 @@ public class Table2 {
     public final String EMPTY_GRID_PLACEHOLDER = "0";
     public final String BLACK_GRID_PLACEHOLDER = "#";
     private final int BLACKS_MIN_DISTANCE = 2;
-    private final int MIN_BLACK_SQUARES; //Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
+    private final int MIN_BLACK_SQUARES;//Hogy minden sorban és oszlopban legyen egy,az egyenlő a GRID_SIZE
     private final int MIN_ADDITIONAL_BLACK_SQUARE;
 
     private String[][] table;
     private Random rnd;
 
-
-    public Table2(int SIZE, Random rnd) {
-        GRID_SIZE = SIZE;
+    public Table2(int GRID_SIZE) {
+        this.GRID_SIZE = GRID_SIZE;
         MIN_BLACK_SQUARES = GRID_SIZE;
+        MIN_ADDITIONAL_BLACK_SQUARE = GRID_SIZE / 2;
+        rnd = new Random();
+        initTable();
+    }
+
+    public Table2(int GRID_SIZE, Random rnd) {
+        this.GRID_SIZE = GRID_SIZE;
         table = new String[GRID_SIZE][GRID_SIZE];
+        MIN_BLACK_SQUARES = GRID_SIZE;
         MIN_ADDITIONAL_BLACK_SQUARE = GRID_SIZE / 2;
         this.rnd = rnd;
         initTable();
@@ -32,7 +39,7 @@ public class Table2 {
     private void fillTalbeWithEmptys() {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                table[i][j] = EMPTY_GRID_PLACEHOLDER;
+                deleteCoordinate(i, j);
             }
         }
     }
@@ -57,7 +64,7 @@ public class Table2 {
         int y = rnd.nextInt(GRID_SIZE);
         Coordinate coordinate = new Coordinate(x,y);
         if (isGeneratedCoordDifferenceMinTwoV3(coordinate)) {
-            insertBlackSquare(coordinate);
+            insertBlack(coordinate);
         }
     }
 
@@ -86,7 +93,7 @@ public class Table2 {
                 int y = i;
                 Coordinate coordinate = new Coordinate(x,y);
                 if (!isRowOrColAlreadyContainsBlackV2(coordinate) && isGeneratedCoordDifferenceMinTwoV3(coordinate)) {
-                    insertBlackSquare(coordinate);
+                    insertBlack(coordinate);
                     break;
                 }
             }
@@ -94,7 +101,7 @@ public class Table2 {
     }
 
 
-    private void insertBlackSquare(Coordinate coord) {
+    private void insertBlack(Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         if (isCoordinateBlack(coord)) {
@@ -112,7 +119,6 @@ public class Table2 {
             if (tempX >= GRID_SIZE) {
                 break;
             }
-            System.out.println(coordinate.getX() + i + ":" + coordinate.getY());
             if (isCoordinateBlack(coordinate.getX() + i, coordinate.getY())) {
                 return false;
             }
@@ -125,12 +131,10 @@ public class Table2 {
             if (tempY >= GRID_SIZE) {
                 break;
             }
-            System.out.println( coordinate.getX() + ":" + (coordinate.getY() + j));
             if (isCoordinateBlack(coordinate.getX(), coordinate.getY() + j)) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -147,7 +151,7 @@ public class Table2 {
     public boolean isCoordinateBlack(Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
-        if (isCoordinateBlack(x, y)) { //|| !EMPTY_GRID_PLACEHOLDER.equals(table[x][y])
+        if (isCoordinateBlack(x, y)) {
             return true;
         }
         return false;
