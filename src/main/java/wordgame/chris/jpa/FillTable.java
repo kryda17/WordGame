@@ -1,9 +1,6 @@
 package wordgame.chris.jpa;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class FillTable {
 
@@ -15,13 +12,15 @@ public class FillTable {
     }
 
     public Table2 fillWords(Table2 table) {
-        List<WordStartingCoordinate> startingCoordinates = findAllStartingCoordinates();
-        ListIterator<WordStartingCoordinate> lit = startingCoordinates.listIterator();
 
+        List<WordStartingCoordinate> startingCoordinates = sort(findAllStartingCoordinates());
+        ListIterator<WordStartingCoordinate> lit = startingCoordinates.listIterator();
+        int counter = 0;
         while (lit.hasNext()) {
+           ++counter;
             boolean found = false;
             WordStartingCoordinate wordStartingCoordinate = lit.next();
-            wordStartingCoordinate.deleteCharAtCoordinates(table);
+            wordStartingCoordinate.rollbackWord(table);
             List<String> words = wordGameJpaDAO
                     .queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(wordStartingCoordinate), likePatternMaker(wordStartingCoordinate));
 
@@ -29,21 +28,22 @@ public class FillTable {
                 if (wordStartingCoordinate.getWords().contains(item)) {
                     continue;
                 }
-                if (isWordWritable(item, wordStartingCoordinate)) {
+                //if (isWordWritable(item, wordStartingCoordinate)) {
                     List<Coordinate> charCoords = fillWordFromCoordinate(item, wordStartingCoordinate);
                     wordStartingCoordinate.addCoordinates(charCoords);
                     wordStartingCoordinate.addWord(item);
                     found = true;
                     break;
                 }
-            }
+           // }
             if (found == false) {
                 wordStartingCoordinate.clearWords();
-                wordStartingCoordinate.deleteCharAtCoordinates(table);
+                wordStartingCoordinate.rollbackWord(table);
                 lit.previous();
                 lit.previous();
             }
         }
+        System.out.println(counter);
         return table;
     }
 
@@ -59,6 +59,10 @@ public class FillTable {
             coordinate = incrementCoordinate(coordinate);
         }
         return word;
+    }
+
+    public void insertBlack(Coordinate coordinate) {
+        table.insertBlack(coordinate);
     }
 
     public boolean isEmptyCoordinate(Coordinate coordinate) {
@@ -115,6 +119,21 @@ public class FillTable {
         return like;
     }
 
+    public int CharsOnCoordinate(WordStartingCoordinate wordStartingCoordinate) {
+        int wordLength = wordLengthFromStartingCoordinate(wordStartingCoordinate);
+        int counter = 0;
+        for (int i = 0; i < wordLength; i++) {
+            if (!isEmptyCoordinate(wordStartingCoordinate)) {
+                ++counter;
+            }
+            wordStartingCoordinate = incrementCoordinate(wordStartingCoordinate);
+        }
+        if (counter == wordLength) {
+            return -1;
+        }
+        return counter;
+    }
+
     public int wordLengthFromStartingCoordinate(WordStartingCoordinate coordinate) {
         Alignment alignment = coordinate.getAlignment();
         int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
@@ -133,6 +152,45 @@ public class FillTable {
             return new WordStartingCoordinate(coordinate.getX() + 1, coordinate.getY(), alignment);
         }
         return new WordStartingCoordinate(coordinate.getX(), coordinate.getY() + 1, alignment);
+    }
+
+    public List<WordStartingCoordinate> sort(List<WordStartingCoordinate> coordinates) {
+        FillTable tableX = new FillTable(new Table2(getTable().GRID_SIZE, new Random(1)));
+        List<WordStartingCoordinate> sortedCoordinates = new ArrayList<>();
+        WordStartingCoordinate c = findLongestCoord(coordinates);
+        String temp = "";
+        for (int i = 0; i< wordLengthFromStartingCoordinate(c); i++) {
+            temp+= "*";
+        }
+        tableX.fillWordFromCoordinate(temp, c);
+        c.rollbackWord(tableX.getTable());
+        sortedCoordinates.add(c);
+        coordinates.remove(c);
+
+        int size = coordinates.size();
+     for (int j = 0; j < size; j++) {
+         coordinates.sort(Comparator.comparingInt(this::CharsOnCoordinate));
+         WordStartingCoordinate c2 = coordinates.get(0);
+         String temp2 = "";
+         for (int i = 0; i < wordLengthFromStartingCoordinate(c2); i++) {
+             temp2 += "*";
+         }
+         tableX.fillWordFromCoordinate(temp2, c2);
+         c2.rollbackWord(tableX.getTable());
+         sortedCoordinates.add(c2);
+         coordinates.remove(c2);
+     }
+        return sortedCoordinates;
+    }
+
+    private WordStartingCoordinate findLongestCoord(List<WordStartingCoordinate> coordinates) {
+        WordStartingCoordinate coord = coordinates.get(0);
+        for (WordStartingCoordinate item : coordinates) {
+            if (wordLengthFromStartingCoordinate(item) > wordLengthFromStartingCoordinate(coord)) {
+                coord = item;
+            }
+        }
+        return coord;
     }
 
     public List<WordStartingCoordinate> findAllStartingCoordinates() {
@@ -194,6 +252,10 @@ public class FillTable {
 
     public void deleteCoordinate(int x,int y) {
         table.deleteCoordinate(x,y);
+    }
+
+    public void deleteCoordinate(Coordinate coordinate) {
+        table.deleteCoordinate(coordinate);
     }
 
     public Table2 getTable() {

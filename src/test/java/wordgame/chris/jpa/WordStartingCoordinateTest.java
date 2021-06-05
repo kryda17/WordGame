@@ -44,7 +44,7 @@ class WordStartingCoordinateTest {
     void clearCoordinatesTest() {
         WordStartingCoordinate wordStartingCoordinate = new WordStartingCoordinate(0,1, Alignment.HORISONTAL);
         wordStartingCoordinate.addCoordinates(List.of(new Coordinate(1,0), new Coordinate(0,1)));
-        wordStartingCoordinate.deleteCharAtCoordinates(new Table2(15,new Random(1)));
+        wordStartingCoordinate.rollbackWord(new Table2(15,new Random(1)));
         assertEquals(0, wordStartingCoordinate.getCoordinates().size());
     }
 

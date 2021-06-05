@@ -101,7 +101,7 @@ public class Table2 {
     }
 
 
-    private void insertBlack(Coordinate coord) {
+    public void insertBlack(Coordinate coord) {
         int x = coord.getX();
         int y = coord.getY();
         if (isCoordinateBlack(coord)) {
@@ -120,6 +120,35 @@ public class Table2 {
                 break;
             }
             if (isCoordinateBlack(coordinate.getX() + i, coordinate.getY())) {
+                return false;
+            }
+        }
+        for (int j = -BLACKS_MIN_DISTANCE; j < BLACKS_MIN_DISTANCE; j++) {
+            int tempY = coordinate.getY() + j;
+            if (tempY < 0) {
+                continue;
+            }
+            if (tempY >= GRID_SIZE) {
+                break;
+            }
+            if (isCoordinateBlack(coordinate.getX(), coordinate.getY() + j)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isGeneratedCoordDifferenceMinTwoV4(Coordinate coordinate) {
+        for (int i = -BLACKS_MIN_DISTANCE; i <= BLACKS_MIN_DISTANCE ; i++) {
+            int tempX = coordinate.getX() + i;
+            int tempY = coordinate.getY() + i;
+            if (tempX < 0 || tempY < 0) {
+                continue;
+            }
+            if (tempX >= GRID_SIZE) {
+                break;
+            }
+            if (isCoordinateBlack(tempX, coordinate.getY()) || isCoordinateBlack(coordinate.getX(), tempY)) {
                 return false;
             }
         }
@@ -169,6 +198,10 @@ public class Table2 {
             throw new IllegalStateException("Can't delete black coordinate.");
         }
         table[y][x] = EMPTY_GRID_PLACEHOLDER;
+    }
+
+    public void deleteCoordinate(Coordinate coordinate) {
+        table[coordinate.getY()][coordinate.getX()] = EMPTY_GRID_PLACEHOLDER;
     }
 
     public String[][] getTable() {

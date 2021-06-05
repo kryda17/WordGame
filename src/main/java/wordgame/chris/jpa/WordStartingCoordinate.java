@@ -49,7 +49,7 @@ public class WordStartingCoordinate extends Coordinate {
         this.coordinates = coordinates;
     }
 
-    public void deleteCharAtCoordinates(Table2 table) {
+    public void rollbackWord(Table2 table) {
         for (Coordinate item : coordinates) {
             table.deleteCoordinate(item.getX(), item.getY());
         }
