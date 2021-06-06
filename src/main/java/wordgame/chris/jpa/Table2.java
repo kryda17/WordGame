@@ -22,6 +22,13 @@ public class Table2 {
         initTable();
     }
 
+    public Table2(String[][] table) {
+        this.table = table;
+        GRID_SIZE = table.length;
+        MIN_BLACK_SQUARES = GRID_SIZE;
+        MIN_ADDITIONAL_BLACK_SQUARE = GRID_SIZE / 2;
+    }
+
     public Table2(int GRID_SIZE, Random rnd) {
         this.GRID_SIZE = GRID_SIZE;
         table = new String[GRID_SIZE][GRID_SIZE];

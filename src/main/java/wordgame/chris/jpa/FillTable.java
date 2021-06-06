@@ -21,21 +21,21 @@ public class FillTable {
             boolean found = false;
             WordStartingCoordinate wordStartingCoordinate = lit.next();
             wordStartingCoordinate.rollbackWord(table);
-            List<String> words = wordGameJpaDAO
-                    .queryWordsWithLenghtAndLike(wordLengthFromStartingCoordinate(wordStartingCoordinate), likePatternMaker(wordStartingCoordinate));
+            List<Word> words = wordGameJpaDAO
+                    .queryWordsWithLike(likePatternMaker(wordStartingCoordinate));
 
-            for (String item : words) {
-                if (wordStartingCoordinate.getWords().contains(item)) {
+            for (Word item : words) {
+                if (wordStartingCoordinate.getWords().contains(item.getWord())) {
                     continue;
                 }
-                //if (isWordWritable(item, wordStartingCoordinate)) {
-                    List<Coordinate> charCoords = fillWordFromCoordinate(item, wordStartingCoordinate);
+                if (isWordWritable(item.getWord(), wordStartingCoordinate)) {
+                    List<Coordinate> charCoords = fillWordFromCoordinate(item.getWord(), wordStartingCoordinate);
                     wordStartingCoordinate.addCoordinates(charCoords);
-                    wordStartingCoordinate.addWord(item);
+                    wordStartingCoordinate.addWord(item.getWord());
                     found = true;
                     break;
                 }
-           // }
+            }
             if (found == false) {
                 wordStartingCoordinate.clearWords();
                 wordStartingCoordinate.rollbackWord(table);
@@ -47,7 +47,7 @@ public class FillTable {
         return table;
     }
 
-    public String getWordFromStartingCoordinate(WordStartingCoordinate coordinate) {
+    public String readWordFromStartingCoordinate(WordStartingCoordinate coordinate) {
         String word = "";
         Alignment alignment = coordinate.getAlignment();
         int incCoord = (alignment == Alignment.HORISONTAL) ? coordinate.getX() : coordinate.getY();
@@ -119,7 +119,7 @@ public class FillTable {
         return like;
     }
 
-    public int CharsOnCoordinate(WordStartingCoordinate wordStartingCoordinate) {
+    public int charsOnCoordinate(WordStartingCoordinate wordStartingCoordinate) {
         int wordLength = wordLengthFromStartingCoordinate(wordStartingCoordinate);
         int counter = 0;
         for (int i = 0; i < wordLength; i++) {
@@ -169,7 +169,7 @@ public class FillTable {
 
         int size = coordinates.size();
      for (int j = 0; j < size; j++) {
-         coordinates.sort(Comparator.comparingInt(this::CharsOnCoordinate));
+         coordinates.sort(Comparator.comparingInt(this::charsOnCoordinate));
          WordStartingCoordinate c2 = coordinates.get(0);
          String temp2 = "";
          for (int i = 0; i < wordLengthFromStartingCoordinate(c2); i++) {
@@ -196,7 +196,7 @@ public class FillTable {
     public List<WordStartingCoordinate> findAllStartingCoordinates() {
         List<WordStartingCoordinate> coordinates = horisontalStartingCoorinates();
         coordinates.addAll(verticalStartingCoordinates());
-        coordinates.sort(Comparator.comparingInt(Coordinate::getY).thenComparing(Coordinate::getX));
+        //coordinates.sort(Comparator.comparingInt(Coordinate::getY).thenComparing(Coordinate::getX));
         return coordinates;
     }
 
@@ -260,9 +260,5 @@ public class FillTable {
 
     public Table2 getTable() {
         return table;
-    }
-
-    public WordGameJpaDAO getWordGameJpaDAO() {
-        return wordGameJpaDAO;
     }
 }

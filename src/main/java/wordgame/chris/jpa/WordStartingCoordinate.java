@@ -52,7 +52,12 @@ public class WordStartingCoordinate extends Coordinate {
     public void rollbackWord(Table2 table) {
         for (Coordinate item : coordinates) {
             table.deleteCoordinate(item.getX(), item.getY());
+
         }
+        clearCoordinates();
+    }
+
+    public void clearCoordinates() {
         coordinates = new ArrayList<>();
     }
 

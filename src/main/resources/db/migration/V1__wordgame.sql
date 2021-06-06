@@ -1,5 +1,17 @@
-CREATE TABLE wordgame (id INT NOT NULL AUTO_INCREMENT,
+
+
+CREATE TABLE words (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 word varchar(255) NOT NULL,
-word_len INT NOT NULL,
-PRIMARY KEY (id)
-)
+word_len INT NOT NULL
+) ENGINE = InnoDB;
+
+CREATE TABLE descriptions (desc_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+description varchar(255) NOT NULL,
+word_f_id INT NOT NULL,
+ CONSTRAINT `word_desc`
+    FOREIGN KEY (word_f_id) REFERENCES words (id)
+    ON DELETE CASCADE
+    ON UPDATE RESTRICT
+) ENGINE = InnoDB;
+
+

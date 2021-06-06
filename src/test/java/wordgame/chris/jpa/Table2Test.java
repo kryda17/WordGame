@@ -25,15 +25,15 @@ class Table2Test {
         Flyway flyway = Flyway.configure().dataSource(mDs).load();
         flyway.clean();
         flyway.migrate();
-        wordGameJpaDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak.txt", "\n");
-        wordGameJpaDAO.addWordsSeperatedBy("src/main/resources/szövegek/szavak2.txt", " ");
+        wordGameJpaDAO.addWordsFromFile("src/main/resources/szövegek/szavak.txt", " ", ";");
     }
 
     @Test
-    void testFunc() {
+    void fillWordsTest() {
         fillTable.fillWords(fillTable.getTable());
         fillTable.printTable();
     }
+
 
     @Test
     void testPrint() {
@@ -61,12 +61,14 @@ class Table2Test {
 
     }
 
-    @Test
+   /* @Test
     void iswordWritableTest() {
         assertTrue(fillTable.isWordWritable("HU", new WordStartingCoordinate(1,0, Alignment.HORISONTAL)));
         assertFalse(fillTable.isWordWritable("DANIELLA", new WordStartingCoordinate(1,0, Alignment.VERTICAL)));
         assertFalse(fillTable.isWordWritable("HU", new WordStartingCoordinate(0,1, Alignment.HORISONTAL)));
     }
+
+    */
 
 
     @Test
@@ -99,9 +101,9 @@ class Table2Test {
     @Test
     void getWordTest() {
         fillTable.fillWordFromCoordinate("HU", new WordStartingCoordinate(1,0, Alignment.HORISONTAL));
-        assertEquals("HU", fillTable.getWordFromStartingCoordinate(new WordStartingCoordinate(1,0, Alignment.HORISONTAL)));
+        assertEquals("HU", fillTable.readWordFromStartingCoordinate(new WordStartingCoordinate(1,0, Alignment.HORISONTAL)));
         fillTable.fillWordFromCoordinate("DANIELLA", new WordStartingCoordinate(0,1, Alignment.VERTICAL));
-        assertEquals("DANIELLA", fillTable.getWordFromStartingCoordinate(new WordStartingCoordinate(0,1, Alignment.VERTICAL)));
+        assertEquals("DANIELLA", fillTable.readWordFromStartingCoordinate(new WordStartingCoordinate(0,1, Alignment.VERTICAL)));
     }
 
     @Test
